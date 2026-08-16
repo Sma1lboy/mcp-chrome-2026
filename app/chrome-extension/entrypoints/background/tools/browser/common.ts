@@ -19,6 +19,7 @@ interface NavigateToolParams {
   windowId?: number;
   background?: boolean; // when true, do not focus window
   activateTab?: boolean; // activate within its window without focusing that window
+  reuseExisting?: boolean; // when false, always open a new tab instead of reusing a matching one
 }
 
 /**
@@ -90,6 +91,7 @@ class NavigateTool extends BaseBrowserToolExecutor {
       tabId,
       background = true,
       activateTab = false,
+      reuseExisting = true,
       windowId,
     } = args;
 
@@ -225,7 +227,7 @@ class NavigateTool extends BaseBrowserToolExecutor {
       };
 
       const urlPatterns = buildUrlPatterns(url);
-      const candidateTabs = await chrome.tabs.query({ url: urlPatterns });
+      const candidateTabs = reuseExisting ? await chrome.tabs.query({ url: urlPatterns }) : [];
       console.log(`Found ${candidateTabs.length} matching tabs with patterns:`, urlPatterns);
 
       // Prefer strict match when user specifies a concrete path/query.
@@ -305,11 +307,13 @@ class NavigateTool extends BaseBrowserToolExecutor {
         if (explicitTab && typeof explicitTab.id === 'number') {
           await chrome.tabs.update(explicitTab.id, { url });
         }
-        // Optionally bring to foreground based on background flag
-        await this.ensureFocus(existingTab, {
-          activate: background !== true || activateTab,
-          focusWindow: background !== true,
-        });
+        // A backgrounded reuse must leave focus exactly where the user put it.
+        if (background !== true || activateTab) {
+          await this.ensureFocus(existingTab, {
+            activate: true,
+            focusWindow: background !== true,
+          });
+        }
         if (activateTab && typeof existingTab.id === 'number') {
           await this.keepTabRendering(existingTab.id);
         }
@@ -329,6 +333,7 @@ class NavigateTool extends BaseBrowserToolExecutor {
               text: JSON.stringify({
                 success: true,
                 message: 'Activated existing tab',
+                reusedExistingTab: true,
                 tabId: updatedTab.id,
                 windowId: updatedTab.windowId,
                 url: updatedTab.url,
@@ -451,7 +456,7 @@ class NavigateTool extends BaseBrowserToolExecutor {
 
             // Trigger auto-capture if fallback window has a tab
             const firstTab = fallbackWindow.tabs?.[0];
-          const pageReady = firstTab?.id ? await this.waitForNavigationReady(firstTab.id) : false;
+            const pageReady = firstTab?.id ? await this.waitForNavigationReady(firstTab.id) : false;
             if (firstTab?.id) {
               await this.triggerAutoCapture(firstTab.id, firstTab.url);
             }

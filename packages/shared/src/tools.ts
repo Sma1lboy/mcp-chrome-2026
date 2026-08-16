@@ -619,7 +619,8 @@ export const TOOL_SCHEMAS: Tool[] = [
       properties: {
         url: {
           type: 'string',
-          description: '可选 URL；提供后先导航到该 URL，再读取目标标签页。省略时读取当前目标标签页。',
+          description:
+            '可选 URL；提供后先导航到该 URL，再读取目标标签页。省略时读取当前目标标签页。',
         },
         maxOutputBytes: {
           type: 'number',
@@ -942,6 +943,11 @@ export const TOOL_SCHEMAS: Tool[] = [
         refresh: {
           type: 'boolean',
           description: '刷新当前激活标签页而非打开 URL。为 true 时忽略 url 参数。默认为 false',
+        },
+        reuseExisting: {
+          type: 'boolean',
+          description:
+            '是否复用已打开同一 URL 的标签页。默认 true；设为 false 时跳过复用逻辑，始终新开标签页。复用发生时响应中会带 reusedExistingTab: true。',
         },
       },
       required: [],

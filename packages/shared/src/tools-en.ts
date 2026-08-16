@@ -959,6 +959,11 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
           description:
             'Refresh the current active tab instead of navigating to a URL. When true, the url parameter is ignored. Defaults to false',
         },
+        reuseExisting: {
+          type: 'boolean',
+          description:
+            'Whether to reuse a tab already showing the same URL. Defaults to true; set false to skip the reuse lookup and always open a new tab. When a tab is reused the response includes reusedExistingTab: true.',
+        },
       },
       required: [],
     },

@@ -27,9 +27,13 @@ const WRITE_TOOL =
 // A native browser dialog can block the helper call used to resolve the active tab.
 // Let the dialog tool resolve its own tab instead of adding a second request that
 // is guaranteed to time out while beforeunload is visible.
+// chrome_navigate also picks its own target: it reuses a tab already showing the
+// URL or opens a new one. Injecting the active tab here made every navigate
+// hijack whatever tab the user was looking at.
 const SELF_RESOLVING_WRITE_TOOLS = new Set([
   TOOL_NAMES.BROWSER.HANDLE_DIALOG,
   TOOL_NAMES.BROWSER.POST_TO_X,
+  TOOL_NAMES.BROWSER.NAVIGATE,
 ]);
 // A call may be issued while another tab is active (side panels, devtools,
 // file:// tabs, etc.). Keep single-tab inspection/interaction tools attached
