@@ -4,7 +4,7 @@
     <div v-show="currentView === 'home'" class="home-view">
       <div class="header">
         <div class="header-content">
-          <h1 class="header-title">猫娘 Chrome MCP Server</h1>
+          <h1 class="header-title">Chrome MCP Server</h1>
           <img class="header-logo" :src="extensionLogoUrl" alt="" />
         </div>
       </div>
@@ -2296,23 +2296,26 @@ onUnmounted(() => {
 .popup-container {
   position: relative;
   min-height: 100%;
-  background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.34), rgba(248, 246, 251, 0.14)),
-    url('/backgrounds/catgirl-premium-portrait.webp') center / cover;
-  border-radius: 24px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  background: var(--ac-bg, #f6f7f9);
+  color: var(--ac-text, #16191d);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(
+    --ac-font-system,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif
+  );
 }
 
 .header {
   flex-shrink: 0;
   padding-left: 20px;
-  background: rgba(255, 255, 255, 0.28);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.44);
-  backdrop-filter: blur(14px);
+  background: var(--ac-header-bg, #ffffff);
+  border-bottom: 1px solid var(--ac-header-border, #e3e6ea);
 }
 
 .header-content {
@@ -2322,18 +2325,18 @@ onUnmounted(() => {
 }
 
 .header-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: #1e293b;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ac-text, #16191d);
   margin: 0;
 }
 
 .header-logo {
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   margin-right: 16px;
-  border-radius: 50%;
-  box-shadow: 0 4px 14px rgba(72, 57, 78, 0.16);
+  border-radius: 6px;
 }
 
 .settings-button {
@@ -2386,59 +2389,57 @@ onUnmounted(() => {
   transition: background 0.2s ease;
 }
 
+/* Semantic status colors are intentionally independent of the accent:
+   connection state must stay legible at a glance in either color scheme. */
 .status-banner.bg-green-subtle {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  background: var(--ac-diff-add-bg, rgba(22, 163, 74, 0.1));
+  border: 1px solid var(--ac-diff-add-border, rgba(22, 163, 74, 0.35));
 }
 
 .status-banner.bg-yellow-subtle {
-  background: #fffbeb;
-  border: 1px solid #fde68a;
+  background: rgba(180, 83, 9, 0.1);
+  border: 1px solid rgba(180, 83, 9, 0.3);
 }
 
 .status-banner.bg-red-subtle {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--ac-diff-del-bg, rgba(220, 38, 38, 0.1));
+  border: 1px solid var(--ac-diff-del-border, rgba(220, 38, 38, 0.35));
 }
 
 .status-banner.bg-gray-subtle {
-  background: #f3f4f6;
-  border: 1px solid #e5e7eb;
+  background: var(--ac-surface-muted, #f1f3f5);
+  border: 1px solid var(--ac-border, #e3e6ea);
 }
 
 .status-dot {
   flex-shrink: 0;
-  height: 12px;
-  width: 12px;
+  height: 10px;
+  width: 10px;
   border-radius: 50%;
-  transition: box-shadow 0.2s ease;
+  transition: background-color 0.2s ease;
 }
 
 .status-dot.dot-green {
-  background-color: #10b981;
-  box-shadow: 0 0 6px rgba(16, 185, 129, 0.4);
+  background-color: var(--ac-success, #16a34a);
 }
 
 .status-dot.dot-red {
-  background-color: #ef4444;
-  box-shadow: 0 0 6px rgba(239, 68, 68, 0.4);
+  background-color: var(--ac-danger, #dc2626);
 }
 
 .status-dot.dot-yellow {
-  background-color: #eab308;
-  box-shadow: 0 0 6px rgba(234, 179, 8, 0.4);
+  background-color: var(--ac-warning, #b45309);
 }
 
 .status-dot.dot-gray {
-  background-color: #9ca3af;
-  box-shadow: 0 0 6px rgba(156, 163, 175, 0.3);
+  background-color: var(--ac-text-subtle, #868f9a);
 }
 
 .status-text {
   flex: 1;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #1e293b;
+  color: var(--ac-text, #16191d);
 }
 
 .model-label {
@@ -2697,11 +2698,10 @@ onUnmounted(() => {
 }
 
 .config-card {
-  background: rgba(255, 255, 255, 0.52);
-  border: 1px solid rgba(255, 255, 255, 0.58);
-  border-radius: var(--ac-radius-card, 12px);
-  box-shadow: var(--ac-shadow-card, 0 1px 3px rgba(0, 0, 0, 0.08));
-  backdrop-filter: blur(12px);
+  background: var(--ac-surface, #ffffff);
+  border: 1px solid var(--ac-border, #e3e6ea);
+  border-radius: var(--ac-radius-card, 10px);
+  box-shadow: var(--ac-shadow-card, 0 1px 2px rgba(16, 24, 40, 0.06));
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -2883,12 +2883,10 @@ onUnmounted(() => {
   flex-direction: column;
   gap: 10px;
   padding: 14px;
-  border-radius: 12px;
-  background:
-    linear-gradient(120deg, rgba(255, 255, 255, 0.42), rgba(246, 243, 250, 0.2)),
-    url('/backgrounds/catgirl-premium-portrait.webp') center / cover;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.25);
-  backdrop-filter: blur(16px);
+  border-radius: var(--ac-radius-card, 10px);
+  background: var(--ac-surface, #ffffff);
+  border: 1px solid var(--ac-border, #e3e6ea);
+  box-shadow: var(--ac-shadow-float, 0 8px 24px -8px rgba(16, 24, 40, 0.18));
 }
 
 .error-log-header {
@@ -2961,9 +2959,10 @@ onUnmounted(() => {
   width: 100%;
   box-sizing: border-box;
   padding: 7px 8px;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--ac-border-strong, #c8ced6);
+  border-radius: var(--ac-radius-button, 6px);
+  background: var(--ac-surface, #ffffff);
+  color: var(--ac-text, #16191d);
 }
 
 .proxy-form textarea {
@@ -3379,10 +3378,10 @@ onUnmounted(() => {
   gap: 12px;
   justify-content: flex-start;
   padding: 16px;
-  background: rgba(255, 255, 255, 0.48);
-  border-radius: var(--ac-radius-card, 12px);
-  box-shadow: var(--ac-shadow-card, 0 1px 3px rgba(0, 0, 0, 0.08));
-  backdrop-filter: blur(12px);
+  background: var(--ac-surface, #ffffff);
+  border: 1px solid var(--ac-border, #e3e6ea);
+  border-radius: var(--ac-radius-card, 10px);
+  box-shadow: var(--ac-shadow-card, 0 1px 2px rgba(16, 24, 40, 0.06));
 }
 
 .quick-tools-help {
@@ -3539,11 +3538,11 @@ onUnmounted(() => {
 
 /* 管理入口卡片样式 */
 .entry-card {
-  background: rgba(255, 255, 255, 0.52);
-  border-radius: var(--ac-radius-card, 12px);
-  box-shadow: var(--ac-shadow-card, 0 1px 3px rgba(0, 0, 0, 0.08));
+  background: var(--ac-surface, #ffffff);
+  border: 1px solid var(--ac-border, #e3e6ea);
+  border-radius: var(--ac-radius-card, 10px);
+  box-shadow: var(--ac-shadow-card, 0 1px 2px rgba(16, 24, 40, 0.06));
   overflow: hidden;
-  backdrop-filter: blur(12px);
 }
 
 .entry-item {

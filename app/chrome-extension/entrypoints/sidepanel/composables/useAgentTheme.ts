@@ -6,39 +6,38 @@ import { ref, type Ref } from 'vue';
 
 /** Available theme identifiers */
 export type AgentThemeId =
+  | 'graphite'
   | 'warm-editorial'
   | 'blueprint-architect'
   | 'zen-journal'
   | 'neo-pop'
-  | 'catgirl'
   | 'dark-console'
   | 'swiss-grid';
 
 /** Storage key for persisting theme preference */
 const STORAGE_KEY_THEME = 'agentTheme';
-const STORAGE_KEY_CATGIRL_MIGRATION = 'agentThemeCatgirlMigrated';
 
 /** Default theme when none is set */
-const DEFAULT_THEME: AgentThemeId = 'catgirl';
+const DEFAULT_THEME: AgentThemeId = 'graphite';
 
 /** Valid theme IDs for validation */
 const VALID_THEMES: AgentThemeId[] = [
+  'graphite',
   'warm-editorial',
   'blueprint-architect',
   'zen-journal',
   'neo-pop',
-  'catgirl',
   'dark-console',
   'swiss-grid',
 ];
 
 /** Theme display names for UI */
 export const THEME_LABELS: Record<AgentThemeId, string> = {
+  graphite: 'Graphite',
   'warm-editorial': 'Editorial',
   'blueprint-architect': 'Blueprint',
   'zen-journal': 'Zen',
   'neo-pop': 'Neo-Pop',
-  catgirl: 'Catgirl',
   'dark-console': 'Console',
   'swiss-grid': 'Swiss',
 };
@@ -86,22 +85,13 @@ export function useAgentTheme(): UseAgentTheme {
    */
   async function initTheme(): Promise<void> {
     try {
-      const result = await chrome.storage.local.get([
-        STORAGE_KEY_THEME,
-        STORAGE_KEY_CATGIRL_MIGRATION,
-      ]);
+      const result = await chrome.storage.local.get([STORAGE_KEY_THEME]);
       const stored = result[STORAGE_KEY_THEME];
 
-      if (stored === 'warm-editorial' && !result[STORAGE_KEY_CATGIRL_MIGRATION]) {
-        theme.value = DEFAULT_THEME;
-        await chrome.storage.local.set({
-          [STORAGE_KEY_THEME]: DEFAULT_THEME,
-          [STORAGE_KEY_CATGIRL_MIGRATION]: true,
-        });
-      } else if (isValidTheme(stored)) {
+      if (isValidTheme(stored)) {
         theme.value = stored;
       } else {
-        // Use preloaded or default
+        // Retired theme ids (e.g. the old catgirl skin) fall through to the default.
         theme.value = getThemeFromDocument();
       }
     } catch (error) {
@@ -167,15 +157,10 @@ export async function preloadAgentTheme(): Promise<AgentThemeId> {
   let themeId: AgentThemeId = DEFAULT_THEME;
 
   try {
-    const result = await chrome.storage.local.get([
-      STORAGE_KEY_THEME,
-      STORAGE_KEY_CATGIRL_MIGRATION,
-    ]);
+    const result = await chrome.storage.local.get([STORAGE_KEY_THEME]);
     const stored = result[STORAGE_KEY_THEME];
 
-    if (stored === 'warm-editorial' && !result[STORAGE_KEY_CATGIRL_MIGRATION]) {
-      themeId = DEFAULT_THEME;
-    } else if (isValidTheme(stored)) {
+    if (isValidTheme(stored)) {
       themeId = stored;
     }
   } catch (error) {

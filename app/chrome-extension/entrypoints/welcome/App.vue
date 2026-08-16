@@ -59,7 +59,7 @@ async function openDocs(): Promise<void> {
 </script>
 
 <template>
-  <div class="agent-theme welcome-root">
+  <div class="agent-theme welcome-root" data-agent-theme="graphite">
     <div class="min-h-screen flex flex-col">
       <header class="welcome-header flex-none px-6 py-5">
         <div class="max-w-3xl mx-auto flex items-center justify-between gap-4">
@@ -85,7 +85,7 @@ async function openDocs(): Promise<void> {
             </div>
             <div class="min-w-0">
               <h1 class="welcome-title text-lg font-medium tracking-tight truncate">
-                猫娘 Chrome MCP Server
+                Chrome MCP Server
               </h1>
               <p class="welcome-muted text-sm truncate">
                 After the extension is installed, this is the only required step.
@@ -285,7 +285,6 @@ async function openDocs(): Promise<void> {
 .welcome-header {
   background: var(--ac-header-bg);
   border-bottom: var(--ac-border-width) solid var(--ac-header-border);
-  backdrop-filter: blur(8px);
 }
 
 .welcome-card {

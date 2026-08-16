@@ -193,11 +193,11 @@ const copy = computed(() =>
 
 const themes = computed<{ id: AgentThemeId; label: string }[]>(() => {
   const chineseLabels: Record<AgentThemeId, string> = {
+    graphite: '石墨',
     'warm-editorial': '暖调',
     'blueprint-architect': '蓝图',
     'zen-journal': '禅意',
     'neo-pop': '潮流',
-    catgirl: '猫娘',
     'dark-console': '深色终端',
     'swiss-grid': '瑞士网格',
   };
