@@ -78,6 +78,15 @@ export const TOOL_NAMES = {
   },
 };
 
+/**
+ * 工作纪律，只挂在 chrome_navigate 和 chrome_workspace 上（每个工具都重复太吃 token）。
+ */
+const WORKSPACE_DISCIPLINE =
+  '【工作纪律】① 你打开的标签页会自动进入你自己的 workspace 标签组，与用户自己的网页严格分开。' +
+  '② 除非用户明确要求操作 TA 正在看的页面，否则始终在自己 workspace 的标签页里干活：' +
+  '调用操作类工具时显式传 tabId（用 navigate 或 workspace 返回的 tabId），不要依赖“当前激活标签页”，那通常是用户正在看的页面。' +
+  '③ 任务结束时用 chrome_workspace 的 cleanup 关掉自己的组，不要留下垃圾标签页。';
+
 export const TOOL_SCHEMAS: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.COLLECT_VIRTUAL_LIST,
@@ -659,7 +668,11 @@ export const TOOL_SCHEMAS: Tool[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        tabId: { type: 'number', description: '目标标签页 ID（默认：当前激活标签页）' },
+        tabId: {
+          type: 'number',
+          description:
+            '目标标签页 ID（默认：当前激活标签页）。强烈建议显式传入（用你 workspace 内的 tabId）；省略时会解析到最近操作过的标签页或用户当前激活标签页，可能误伤用户正在看的页面。',
+        },
         windowId: {
           type: 'number',
           description: '省略 tabId 时用于选择活动标签页的窗口 ID。',
@@ -902,7 +915,10 @@ export const TOOL_SCHEMAS: Tool[] = [
   // },
   {
     name: TOOL_NAMES.BROWSER.NAVIGATE,
-    description: '打开 URL、刷新当前标签页，或在浏览历史中前进/后退',
+    description:
+      '打开 URL、刷新当前标签页，或在浏览历史中前进/后退。' +
+      WORKSPACE_DISCIPLINE +
+      '默认 background:true，不抢用户焦点；除非用户要求可视化跟随，否则保持该默认。',
     inputSchema: {
       type: 'object',
       properties: {
@@ -962,7 +978,8 @@ export const TOOL_SCHEMAS: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.WORKSPACE,
     description:
-      '管理 agent 的工作区标签组：把 agent 打开的标签页圈进一个命名的折叠分组，与用户自己的标签页区分开。',
+      '管理 agent 的工作区标签组：把 agent 打开的标签页圈进一个命名的折叠分组，与用户自己的标签页区分开。' +
+      WORKSPACE_DISCIPLINE,
     inputSchema: {
       type: 'object',
       properties: {
@@ -1428,7 +1445,7 @@ export const TOOL_SCHEMAS: Tool[] = [
         tabId: {
           type: 'number',
           description:
-            '目标标签页 ID；省略时优先使用最近操作的标签页，没有历史目标时使用当前激活标签页。',
+            '目标标签页 ID；省略时优先使用最近操作的标签页，没有历史目标时使用当前激活标签页。强烈建议显式传入（用你 workspace 内的 tabId）；省略时会解析到最近操作过的标签页或用户当前激活标签页，可能误伤用户正在看的页面。',
         },
         windowId: {
           type: 'number',
@@ -1617,7 +1634,8 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
         tabId: {
           type: 'number',
-          description: '目标标签页 ID；省略时使用当前激活标签页。',
+          description:
+            '目标标签页 ID；省略时使用当前激活标签页。强烈建议显式传入（用你 workspace 内的 tabId）；省略时会解析到最近操作过的标签页或用户当前激活标签页，可能误伤用户正在看的页面。',
         },
         windowId: {
           type: 'number',
@@ -1663,7 +1681,8 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
         tabId: {
           type: 'number',
-          description: '目标标签页 ID；省略时使用当前激活标签页。',
+          description:
+            '目标标签页 ID；省略时使用当前激活标签页。强烈建议显式传入（用你 workspace 内的 tabId）；省略时会解析到最近操作过的标签页或用户当前激活标签页，可能误伤用户正在看的页面。',
         },
         windowId: {
           type: 'number',
@@ -1791,7 +1810,8 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
         tabId: {
           type: 'number',
-          description: '目标标签页 ID；省略时使用当前激活标签页。',
+          description:
+            '目标标签页 ID；省略时使用当前激活标签页。强烈建议显式传入（用你 workspace 内的 tabId）；省略时会解析到最近操作过的标签页或用户当前激活标签页，可能误伤用户正在看的页面。',
         },
         windowId: {
           type: 'number',

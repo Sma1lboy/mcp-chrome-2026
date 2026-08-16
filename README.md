@@ -186,6 +186,20 @@ bash start-server.sh
 
 ---
 
+## 🧱 Workspace 隔离（agent 与用户网页分离）
+
+设计目标和 Claude in Chrome 一致：**agent 在你的浏览器里干活，但不打扰你**。你正在看的页面属于你，agent 的页面归 agent 自己的地盘。
+
+**自动分组。** MCP 握手时客户端会上报 `clientInfo.name`，服务端据此推导组名并固定颜色：`claude-code` → `claude`（橙）、`Codex CLI` → `codex`（蓝）、`gemini`（绿）、`kimi`（紫）、`opencode`（青），其他名字原样使用并落到灰色。Chrome 只会为整个浏览器拉起**一个**共享的 native server，所以组名必须按 MCP session 区分——同一个端口上的多个 agent 因此各自成组。
+
+**覆盖顺序。** 显式 `workspace` 参数 > session 客户端名 > 环境变量 `MCP_WORKSPACE` > `agent`。传空串 `workspace: ""` 表示显式退出分组。stdio 模式下每个 harness 是独立进程，`MCP_WORKSPACE` 在那里可用。
+
+**不劫持你的标签页。** `chrome_navigate` 默认 `background: true`，不抢焦点、不激活窗口。复用已打开的同 URL 标签页时响应会带 `reusedExistingTab: true`；传 `reuseExisting: false` 可强制新开标签页。
+
+**收摊。** 任务结束调用 `chrome_workspace` 的 `cleanup`（不传 `name` 则清理全部 MCP 创建的组）关掉自己那一组，不留垃圾标签页。
+
+---
+
 ## 📚 使用指南
 
 | 指南                                          | 说明                                      |

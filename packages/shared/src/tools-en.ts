@@ -78,6 +78,16 @@ const TOOL_NAMES = {
   },
 };
 
+/**
+ * Working discipline, attached only to chrome_navigate and chrome_workspace
+ * (repeating it on every tool would cost too many tokens).
+ */
+const WORKSPACE_DISCIPLINE =
+  ' [Working discipline] 1. Tabs you open are placed in your own workspace tab group, kept strictly separate from the pages the user opened themselves.' +
+  " 2. Unless the user explicitly asks you to act on the page they are looking at, always work inside your own workspace's tabs:" +
+  ' pass tabId explicitly to action tools (use a tabId returned by navigate or workspace) instead of relying on the active tab, which is usually the page the user is reading.' +
+  ' 3. When the task is done, close your group with chrome_workspace cleanup so you do not leave stray tabs behind.';
+
 export const TOOL_SCHEMAS_EN: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.COLLECT_VIRTUAL_LIST,
@@ -667,7 +677,11 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
     inputSchema: {
       type: 'object',
       properties: {
-        tabId: { type: 'number', description: 'Target tab ID (default: active tab)' },
+        tabId: {
+          type: 'number',
+          description:
+            'Target tab ID (default: active tab). Strongly prefer passing this explicitly (use a tabId from your own workspace); when omitted it resolves to the most recently operated tab or the active tab, which risks disturbing the page the user is looking at.',
+        },
         windowId: {
           type: 'number',
           description: 'Window ID used to choose the active tab when tabId is omitted.',
@@ -912,7 +926,9 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.NAVIGATE,
     description:
-      'Navigate to a URL, refresh the current tab, or navigate browser history (back/forward)',
+      'Navigate to a URL, refresh the current tab, or navigate browser history (back/forward).' +
+      WORKSPACE_DISCIPLINE +
+      ' background defaults to true so the user keeps focus; leave that default in place unless the user asks to watch the navigation happen.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -977,7 +993,8 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.WORKSPACE,
     description:
-      "Manage the agent's workspace tab group: keep agent-opened tabs inside a named, collapsed group so they stay separate from the user's own tabs.",
+      "Manage the agent's workspace tab group: keep agent-opened tabs inside a named, collapsed group so they stay separate from the user's own tabs." +
+      WORKSPACE_DISCIPLINE,
     inputSchema: {
       type: 'object',
       properties: {
@@ -1452,7 +1469,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         tabId: {
           type: 'number',
           description:
-            'Target tab ID. If omitted, uses the most recently operated tab, then the active tab.',
+            'Target tab ID. If omitted, uses the most recently operated tab, then the active tab. Strongly prefer passing this explicitly (use a tabId from your own workspace); when omitted it resolves to the most recently operated tab or the active tab, which risks disturbing the page the user is looking at.',
         },
         windowId: {
           type: 'number',
@@ -1633,7 +1650,8 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         },
         tabId: {
           type: 'number',
-          description: 'Target tab ID. If omitted, uses the current active tab.',
+          description:
+            'Target tab ID. If omitted, uses the current active tab. Strongly prefer passing this explicitly (use a tabId from your own workspace); when omitted it resolves to the most recently operated tab or the active tab, which risks disturbing the page the user is looking at.',
         },
         windowId: {
           type: 'number',
@@ -1676,7 +1694,8 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         },
         tabId: {
           type: 'number',
-          description: 'Target tab ID. If omitted, uses the current active tab.',
+          description:
+            'Target tab ID. If omitted, uses the current active tab. Strongly prefer passing this explicitly (use a tabId from your own workspace); when omitted it resolves to the most recently operated tab or the active tab, which risks disturbing the page the user is looking at.',
         },
         windowId: {
           type: 'number',
@@ -1805,7 +1824,8 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         },
         tabId: {
           type: 'number',
-          description: 'Target tab ID. If omitted, uses the current active tab.',
+          description:
+            'Target tab ID. If omitted, uses the current active tab. Strongly prefer passing this explicitly (use a tabId from your own workspace); when omitted it resolves to the most recently operated tab or the active tab, which risks disturbing the page the user is looking at.',
         },
         windowId: {
           type: 'number',

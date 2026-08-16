@@ -186,6 +186,20 @@ The service listens on `http://127.0.0.1:12306/mcp`.
 
 ---
 
+## 🧱 Workspace isolation (agent tabs vs. your tabs)
+
+Same goal as Claude in Chrome: **the agent works in your browser without getting in your way.** The page you are reading is yours; the agent's pages live in the agent's own territory.
+
+**Automatic grouping.** Clients report `clientInfo.name` during the MCP handshake, and the server derives a group name and fixed colour from it: `claude-code` → `claude` (orange), `Codex CLI` → `codex` (blue), `gemini` (green), `kimi` (purple), `opencode` (cyan); anything else is used as-is and falls back to grey. Chrome starts exactly **one** shared native server for the whole browser, so the group has to be derived per MCP session — that is what keeps several agents on the same port in separate groups.
+
+**Override order.** Explicit `workspace` argument > session client name > `MCP_WORKSPACE` environment variable > `agent`. Passing an empty string (`workspace: ""`) opts out of grouping entirely. Under stdio each harness runs its own process, so `MCP_WORKSPACE` is usable there.
+
+**It does not hijack your tab.** `chrome_navigate` defaults to `background: true`, so it neither steals focus nor raises a window. When it reuses a tab already showing the URL, the response carries `reusedExistingTab: true`; pass `reuseExisting: false` to always open a fresh tab.
+
+**Clean up.** Call `chrome_workspace` with `cleanup` when the task is done (omit `name` to clear every MCP-created group) so no stray tabs are left behind.
+
+---
+
 ## 📚 Usage Guides
 
 | Guide                                               | Description                                            |
