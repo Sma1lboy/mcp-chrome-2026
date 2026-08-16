@@ -2,6 +2,7 @@ import { createErrorResponse, ToolResult } from '@/common/tool-handler';
 import { BaseBrowserToolExecutor } from '../base-browser';
 import { TOOL_NAMES } from '@ethanwilkins/chrome-mcp-shared-2026';
 import { captureFrameOnAction, isAutoCaptureActive } from './gif-recorder';
+import { ensureWorkspaceGroup } from './workspace';
 import { cdpSessionManager } from '@/utils/cdp-session-manager';
 
 // Default window dimensions
@@ -20,6 +21,7 @@ interface NavigateToolParams {
   background?: boolean; // when true, do not focus window
   activateTab?: boolean; // activate within its window without focusing that window
   reuseExisting?: boolean; // when false, always open a new tab instead of reusing a matching one
+  workspace?: string; // tab group to place a newly opened tab in; '' opts out
 }
 
 /**
@@ -92,6 +94,7 @@ class NavigateTool extends BaseBrowserToolExecutor {
       background = true,
       activateTab = false,
       reuseExisting = true,
+      workspace,
       windowId,
     } = args;
 
@@ -392,9 +395,18 @@ class NavigateTool extends BaseBrowserToolExecutor {
         }
       } else {
         console.log('Opening URL in the last active window.');
+        // Resolve the workspace group first: chrome.tabs.group moves a tab into
+        // the group's window, so the tab must be created there to begin with.
+        const groupId = workspace ? await ensureWorkspaceGroup(workspace) : undefined;
+        const groupWindowId =
+          groupId === undefined ? undefined : (await chrome.tabGroups.get(groupId)).windowId;
+
         // Try to open a new tab in the specified window, otherwise the most recently active window
         let targetWindow: chrome.windows.Window | null = null;
-        if (typeof windowId === 'number') {
+        if (typeof groupWindowId === 'number') {
+          targetWindow = await chrome.windows.get(groupWindowId, { populate: false });
+        }
+        if (!targetWindow && typeof windowId === 'number') {
           targetWindow = await chrome.windows.get(windowId, { populate: false });
         }
         if (!targetWindow) {
@@ -409,6 +421,9 @@ class NavigateTool extends BaseBrowserToolExecutor {
             windowId: targetWindow.id,
             active: background !== true || activateTab,
           });
+          if (groupId !== undefined && typeof newTab.id === 'number') {
+            await chrome.tabs.group({ tabIds: [newTab.id], groupId });
+          }
           if (background !== true) {
             await chrome.windows.update(targetWindow.id, { focused: true });
           }
@@ -434,6 +449,7 @@ class NavigateTool extends BaseBrowserToolExecutor {
                   windowId: targetWindow.id,
                   url: newTab.url,
                   pageReady,
+                  ...(groupId === undefined ? {} : { workspace, groupId }),
                 }),
               },
             ],

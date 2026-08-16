@@ -62,6 +62,9 @@ const RECENT_TAB_DEFAULT_TOOLS = new Set([
 const LONG_TOOL =
   /(?:performance|trace|record|download|upload|proxy_diagnostics|collect_virtual_list|select_all_items)/;
 const tabQueues = new Map<string, Promise<void>>();
+// Tabs this server opens land in their own tab group so they stay separate from
+// the user's own tabs. Each agent sets MCP_WORKSPACE in its harness config.
+const DEFAULT_WORKSPACE = process.env.MCP_WORKSPACE || 'agent';
 const MIN_TOOL_TRANSPORT_TIMEOUT_MS = 20_000;
 type ToolProgressReporter = (progress: Record<string, unknown>) => void | Promise<void>;
 
@@ -268,6 +271,12 @@ const handleToolCall = async (
   recentToolCalls.push(activity);
   if (recentToolCalls.length > 100) recentToolCalls.shift();
   try {
+    if (
+      name === TOOL_NAMES.BROWSER.NAVIGATE &&
+      args.workspace === undefined &&
+      args.tabId === undefined
+    )
+      args = { ...args, workspace: DEFAULT_WORKSPACE };
     if (RECENT_TAB_DEFAULT_TOOLS.has(name))
       args = await resolveRecentOrActiveTab(args, signal, activity.requestId);
     if (WRITE_TOOL.test(name) && !name.startsWith('flow.') && !SELF_RESOLVING_WRITE_TOOLS.has(name))

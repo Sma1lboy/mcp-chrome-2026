@@ -7,6 +7,7 @@ export const TOOL_NAMES = {
     SCREENSHOT: 'chrome_screenshot',
     CLOSE_TABS: 'chrome_close_tabs',
     SWITCH_TAB: 'chrome_switch_tab',
+    WORKSPACE: 'chrome_workspace',
     WEB_FETCHER: 'chrome_get_web_content',
     CLICK: 'chrome_click_element',
     FILL: 'chrome_fill_or_select',
@@ -948,6 +949,33 @@ export const TOOL_SCHEMAS: Tool[] = [
           type: 'boolean',
           description:
             '是否复用已打开同一 URL 的标签页。默认 true；设为 false 时跳过复用逻辑，始终新开标签页。复用发生时响应中会带 reusedExistingTab: true。',
+        },
+        workspace: {
+          type: 'string',
+          description:
+            '新标签页要放入的工作区标签组名称。默认情况下 agent 打开的标签页都会进入自己的工作区分组，与用户自己的标签页区分开；传空字符串可退出分组。仅对新开标签页生效，复用已有标签页时不会移动它。',
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: TOOL_NAMES.BROWSER.WORKSPACE,
+    description:
+      '管理 agent 的工作区标签组：把 agent 打开的标签页圈进一个命名的折叠分组，与用户自己的标签页区分开。',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: {
+          type: 'string',
+          enum: ['ensure', 'list', 'cleanup'],
+          description:
+            'ensure：创建或复用指定名称的标签组并返回其信息；list：列出所有由 MCP 管理的工作区；cleanup：关闭工作区内全部标签页并移除记录。默认 ensure。',
+        },
+        name: {
+          type: 'string',
+          description:
+            '工作区名称，默认 "agent"。颜色按 agent 名前缀映射：claude→橙、codex→蓝、gemini→绿、kimi→紫、opencode→青，其他为灰。cleanup 时不传 name 表示清理全部工作区。',
         },
       },
       required: [],

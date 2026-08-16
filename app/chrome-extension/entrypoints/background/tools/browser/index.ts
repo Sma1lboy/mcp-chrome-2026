@@ -1,5 +1,6 @@
 export { navigateTool, closeTabsTool, switchTabTool } from './common';
 export { windowTool } from './window';
+export { workspaceTool } from './workspace';
 export { cookieGetTool, cookieSetTool, cookieDeleteTool } from './cookie';
 export { vectorSearchTabsContentTool as searchTabsContentTool } from './vector-search';
 export { screenshotTool } from './screenshot';

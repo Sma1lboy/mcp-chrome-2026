@@ -7,6 +7,7 @@ const TOOL_NAMES = {
     SCREENSHOT: 'chrome_screenshot',
     CLOSE_TABS: 'chrome_close_tabs',
     SWITCH_TAB: 'chrome_switch_tab',
+    WORKSPACE: 'chrome_workspace',
     WEB_FETCHER: 'chrome_get_web_content',
     CLICK: 'chrome_click_element',
     FILL: 'chrome_fill_or_select',
@@ -963,6 +964,33 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
           type: 'boolean',
           description:
             'Whether to reuse a tab already showing the same URL. Defaults to true; set false to skip the reuse lookup and always open a new tab. When a tab is reused the response includes reusedExistingTab: true.',
+        },
+        workspace: {
+          type: 'string',
+          description:
+            "Name of the workspace tab group a newly opened tab is placed in. By default every tab an agent opens goes into its own workspace group, keeping them separate from the user's own tabs; pass an empty string to opt out. Only applies to newly opened tabs — a reused tab is never moved.",
+        },
+      },
+      required: [],
+    },
+  },
+  {
+    name: TOOL_NAMES.BROWSER.WORKSPACE,
+    description:
+      "Manage the agent's workspace tab group: keep agent-opened tabs inside a named, collapsed group so they stay separate from the user's own tabs.",
+    inputSchema: {
+      type: 'object',
+      properties: {
+        action: {
+          type: 'string',
+          enum: ['ensure', 'list', 'cleanup'],
+          description:
+            'ensure: create or reuse the named tab group and return its details; list: list all MCP-managed workspaces; cleanup: close every tab in the workspace and forget it. Defaults to ensure.',
+        },
+        name: {
+          type: 'string',
+          description:
+            'Workspace name, defaults to "agent". The group colour is derived from the agent name prefix: claude→orange, codex→blue, gemini→green, kimi→purple, opencode→cyan, anything else→grey. Omit name on cleanup to clear every workspace.',
         },
       },
       required: [],
