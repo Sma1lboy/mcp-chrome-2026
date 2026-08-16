@@ -63,8 +63,19 @@ const LONG_TOOL =
   /(?:performance|trace|record|download|upload|proxy_diagnostics|collect_virtual_list|select_all_items)/;
 const tabQueues = new Map<string, Promise<void>>();
 // Tabs this server opens land in their own tab group so they stay separate from
-// the user's own tabs. Each agent sets MCP_WORKSPACE in its harness config.
-const DEFAULT_WORKSPACE = process.env.MCP_WORKSPACE || 'agent';
+// the user's own tabs. Chrome starts one shared server for every harness, so the
+// group has to come from the MCP session's clientInfo rather than the process
+// environment; MCP_WORKSPACE is only a fallback (it does fit stdio, where each
+// harness runs its own process).
+const FALLBACK_WORKSPACE = process.env.MCP_WORKSPACE || 'agent';
+
+/**
+ * Reduce an MCP clientInfo.name to a workspace name: 'claude-code' -> 'claude',
+ * 'Codex CLI' -> 'codex'. Returns undefined when nothing usable is left.
+ */
+export function workspaceFromClientName(clientName?: string): string | undefined {
+  return /[a-z0-9]+/.exec(String(clientName ?? '').toLowerCase())?.[0];
+}
 const MIN_TOOL_TRANSPORT_TIMEOUT_MS = 20_000;
 type ToolProgressReporter = (progress: Record<string, unknown>) => void | Promise<void>;
 
@@ -170,6 +181,9 @@ export const setupTools = (server: Server) => {
       request.params.arguments || {},
       extra.signal,
       reportProgress,
+      // getMcpServer() builds one Server per MCP session, and the SDK records the
+      // peer's clientInfo on it during initialize, so this is already per-session.
+      workspaceFromClientName(server.getClientVersion()?.name),
     );
   });
 };
@@ -261,6 +275,7 @@ const handleToolCall = async (
   args: any,
   signal?: AbortSignal,
   reportProgress?: ToolProgressReporter,
+  sessionWorkspace?: string,
 ): Promise<CallToolResult> => {
   const activity: ToolActivity = {
     requestId: randomUUID(),
@@ -276,7 +291,7 @@ const handleToolCall = async (
       args.workspace === undefined &&
       args.tabId === undefined
     )
-      args = { ...args, workspace: DEFAULT_WORKSPACE };
+      args = { ...args, workspace: sessionWorkspace || FALLBACK_WORKSPACE };
     if (RECENT_TAB_DEFAULT_TOOLS.has(name))
       args = await resolveRecentOrActiveTab(args, signal, activity.requestId);
     if (WRITE_TOOL.test(name) && !name.startsWith('flow.') && !SELF_RESOLVING_WRITE_TOOLS.has(name))

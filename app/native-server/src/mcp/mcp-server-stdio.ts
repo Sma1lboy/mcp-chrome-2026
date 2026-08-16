@@ -64,7 +64,15 @@ export const ensureMcpClient = async () => {
     }
 
     const config = loadConfig();
-    mcpClient = new Client({ name: 'Mcp Chrome Proxy', version: '1.0.0' }, { capabilities: {} });
+    // Identify upstream as the harness that launched us, not as the proxy, so the
+    // HTTP server can put this session's tabs in that harness's workspace group.
+    // MCP_WORKSPACE cannot do this job here: it would be read in the HTTP server's
+    // process, not in this one.
+    const harnessName = stdioMcpServer?.getClientVersion()?.name;
+    mcpClient = new Client(
+      { name: harnessName || 'Mcp Chrome Proxy', version: '1.0.0' },
+      { capabilities: {} },
+    );
     const transport = new StreamableHTTPClientTransport(new URL(config.url), {});
     await mcpClient.connect(transport);
     return mcpClient;
