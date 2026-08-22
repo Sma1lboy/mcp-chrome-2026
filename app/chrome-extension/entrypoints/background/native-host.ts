@@ -17,6 +17,7 @@ const RECONNECT_BASE_DELAY_MS = 500;
 const RECONNECT_MAX_DELAY_MS = 60_000;
 const RECONNECT_MAX_FAST_ATTEMPTS = 8;
 const RECONNECT_COOLDOWN_DELAY_MS = 5 * 60_000;
+const RECONNECT_ALARM = 'native-host-reconnect';
 
 // ==================== Auto-connect State ====================
 
@@ -137,6 +138,7 @@ function clearReconnectTimer(): void {
 function resetReconnectState(): void {
   reconnectAttempts = 0;
   clearReconnectTimer();
+  void chrome.alarms.clear(RECONNECT_ALARM);
 }
 
 // ==================== Keepalive Management ====================
@@ -251,6 +253,9 @@ function scheduleReconnect(reason: string): void {
     reconnectAttempts += 1;
     void ensureNativeConnected(`reconnect:${reason}`).catch(() => {});
   }, delay);
+  // setTimeout dies with the service worker; an alarm wakes it, so a host
+  // that was killed while the SW was idle still gets picked up again.
+  void chrome.alarms.create(RECONNECT_ALARM, { periodInMinutes: 1 });
 }
 
 // ==================== Server Status Update ====================
@@ -520,6 +525,11 @@ export const initNativeHostListener = () => {
 
   // Auto-connect on SW activation (covers SW restart after idle termination)
   void ensureNativeConnected('sw_startup').catch(() => {});
+
+  chrome.alarms.onAlarm.addListener((alarm) => {
+    if (alarm.name !== RECONNECT_ALARM || nativePort || !autoConnectEnabled) return;
+    void ensureNativeConnected('alarm').catch(() => {});
+  });
 
   // Auto-connect on Chrome browser startup
   chrome.runtime.onStartup.addListener(() => {
