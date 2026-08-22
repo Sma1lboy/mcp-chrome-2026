@@ -319,7 +319,11 @@ export class Server {
         };
         await getMcpServer().connect(transport);
       } else {
-        reply.code(HTTP_STATUS.BAD_REQUEST).send({ error: ERROR_MESSAGES.INVALID_MCP_REQUEST });
+        // 404, not 400: the MCP spec tells clients to start a new session on 404,
+        // whereas a 400 makes them give up ("session invalid") after a reaped session.
+        reply
+          .code(sessionId ? HTTP_STATUS.NOT_FOUND : HTTP_STATUS.BAD_REQUEST)
+          .send({ error: ERROR_MESSAGES.INVALID_MCP_REQUEST });
         return;
       }
 
@@ -348,30 +352,35 @@ export class Server {
       const session = sessionId ? this.transportsMap.get(sessionId) : undefined;
       const transport = session?.transport as StreamableHTTPServerTransport | undefined;
 
-      if (!transport) {
-        reply.code(HTTP_STATUS.BAD_REQUEST).send({ error: ERROR_MESSAGES.INVALID_SSE_SESSION });
+      if (!session || !transport) {
+        reply.code(HTTP_STATUS.NOT_FOUND).send({ error: ERROR_MESSAGES.INVALID_SSE_SESSION });
         return;
       }
 
-      reply.raw.setHeader('Content-Type', 'text/event-stream');
-      reply.raw.setHeader('Cache-Control', 'no-cache');
-      reply.raw.setHeader('Connection', 'keep-alive');
-      reply.raw.flushHeaders();
+      // The standby SSE stream is a live connection, not idle time: hold the
+      // session's activeRequests while it is open so cleanupStaleSessions() does
+      // not reap it after SESSION_TTL_MS of no tool calls (the cause of the
+      // "HTTP connection dropped after ~600s" disconnects in harness logs).
+      session.activeRequests++;
+      // 'close' on the response fires both when the stream ends and when the
+      // socket drops, so a kept-alive socket cannot pin the session forever.
+      reply.raw.once('close', () => {
+        session.activeRequests--;
+        session.lastActivityAt = new Date();
+        request.log.info(`SSE client disconnected for session: ${sessionId}`);
+      });
 
+      // Hand the raw response to the SDK untouched: it writes the SSE headers
+      // itself (writeHead), so pre-flushing headers here made every GET die with
+      // ERR_HTTP_HEADERS_SENT and the standby stream never stayed up.
+      reply.hijack();
       try {
         await transport.handleRequest(request.raw, reply.raw);
-        if (!reply.sent) {
-          reply.hijack();
-        }
       } catch (error) {
         if (!reply.raw.writableEnded) {
           reply.raw.end();
         }
       }
-
-      request.socket.on('close', () => {
-        request.log.info(`SSE client disconnected for session: ${sessionId}`);
-      });
     });
 
     // MCP DELETE endpoint
@@ -381,7 +390,7 @@ export class Server {
       const transport = session?.transport as StreamableHTTPServerTransport | undefined;
 
       if (!transport) {
-        reply.code(HTTP_STATUS.BAD_REQUEST).send({ error: ERROR_MESSAGES.INVALID_SESSION_ID });
+        reply.code(HTTP_STATUS.NOT_FOUND).send({ error: ERROR_MESSAGES.INVALID_SESSION_ID });
         return;
       }
 
