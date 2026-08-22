@@ -4,7 +4,7 @@
     <div v-show="currentView === 'home'" class="home-view">
       <div class="header">
         <div class="header-content">
-          <h1 class="header-title">Chrome MCP Server</h1>
+          <h1 class="header-title">Rove in Chrome</h1>
           <img class="header-logo" :src="extensionLogoUrl" alt="" />
         </div>
       </div>

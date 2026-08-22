@@ -18,7 +18,7 @@ const IS_DEV = process.env.NODE_ENV !== 'production' && process.env.MODE !== 'pr
 export default defineConfig({
   modules: ['@wxt-dev/module-vue'],
   zip: {
-    name: 'chrome-mcp-server',
+    name: 'rove-in-chrome',
   },
   webExt: {
     // 方案1: 禁用自动启动（推荐）
@@ -70,7 +70,7 @@ export default defineConfig({
     },
     action: {
       default_popup: 'popup.html',
-      default_title: 'Chrome MCP Server',
+      default_title: 'Rove in Chrome',
     },
     // Chrome Side Panel entry for workflow management
     // Ref: https://developer.chrome.com/docs/extensions/reference/api/sidePanel

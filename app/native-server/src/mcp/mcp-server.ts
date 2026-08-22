@@ -5,7 +5,7 @@ import packageJson from '../../package.json';
 export const getMcpServer = () => {
   const mcpServer = new Server(
     {
-      name: 'ChromeMcpServer',
+      name: 'rove-in-chrome',
       version: packageJson.version,
     },
     {

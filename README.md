@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="app/chrome-extension/public/icon/128.png" alt="Chrome MCP Server" width="96" height="96" />
+  <img src="app/chrome-extension/public/icon/128.png" alt="Rove in Chrome" width="96" height="96" />
 </p>
 
-<h1 align="center">Chrome MCP Server</h1>
+<h1 align="center">Rove in Chrome</h1>
 
 <p align="center">
   <b>让 AI 直接操控你的 Chrome 浏览器</b><br />

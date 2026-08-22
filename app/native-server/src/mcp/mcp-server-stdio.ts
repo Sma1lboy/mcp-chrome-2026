@@ -38,7 +38,7 @@ export const getStdioMcpServer = () => {
   }
   stdioMcpServer = new Server(
     {
-      name: 'StdioChromeMcpServer',
+      name: 'rove-in-chrome-stdio',
       version: packageJson.version,
     },
     {
