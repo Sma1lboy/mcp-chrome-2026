@@ -1,10 +1,10 @@
 {
   "extensionName": {
-    "message": "Rove in Chrome",
+    "message": "Rove",
     "description": "扩展名称"
   },
   "extensionDescription": {
-    "message": "使用你自己的 Chrome 浏览器暴露浏览器功能",
+    "message": "Rove in Chrome",
     "description": "扩展描述"
   },
   "nativeServerConfigLabel": {

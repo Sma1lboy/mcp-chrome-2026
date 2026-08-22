@@ -1,9 +1,9 @@
 {
   "extensionName": {
-    "message": "Rove in Chrome"
+    "message": "Rove"
   },
   "extensionDescription": {
-    "message": "自身のChromeブラウザの機能を外部に公開します"
+    "message": "Rove in Chrome"
   },
   "nativeServerConfigLabel": {
     "message": "ネイティブサーバー設定"

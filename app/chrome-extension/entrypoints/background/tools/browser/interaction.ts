@@ -463,7 +463,7 @@ class FillTool extends BaseBrowserToolExecutor {
         isError: false,
       };
     } catch (error) {
-      console.error('Error in fill operation:', error);
+      console.warn('Error in fill operation:', error);
       return createErrorResponse(
         `Error filling element: ${error instanceof Error ? error.message : String(error)}`,
       );

@@ -126,9 +126,15 @@ if (window.__FILL_HELPER_INITIALIZED__) {
     try {
       const matches =
         selectorType === 'xpath' ? queryXPathAll(selector) : querySelectorAllRobust(selector);
-      if (matches.length === 0 && typeof selector === 'string' && /\bplaceholder\b/i.test(selector)) {
+      if (
+        matches.length === 0 &&
+        typeof selector === 'string' &&
+        /\bplaceholder\b/i.test(selector)
+      ) {
         const comboboxes = Array.from(
-          document.querySelectorAll('input[role="combobox"], textarea[role="combobox"], [role="combobox"]'),
+          document.querySelectorAll(
+            'input[role="combobox"], textarea[role="combobox"], [role="combobox"]',
+          ),
         ).filter((candidate) => isElementRenderable(candidate));
         if (comboboxes.length === 1) return comboboxes[0];
       }
@@ -283,19 +289,19 @@ if (window.__FILL_HELPER_INITIALIZED__) {
             }
             if (!validTags.includes(element.tagName) && !isContentEditableElement(element)) {
               return {
-                error: `Element with selector "${selector}" is not a fillable element (must be INPUT, TEXTAREA, SELECT, or contenteditable)`,
+                error: `Element with selector "${selector}" is not a fillable element (must be INPUT, TEXTAREA, SELECT, or contenteditable); to press a button or link use chrome_click_element`,
                 elementInfo,
               };
             }
           } else {
             return {
-              error: `Element with selector "${selector}" is not a fillable element (must be INPUT, TEXTAREA, SELECT, or contenteditable)`,
+              error: `Element with selector "${selector}" is not a fillable element (must be INPUT, TEXTAREA, SELECT, or contenteditable); to press a button or link use chrome_click_element`,
               elementInfo,
             };
           }
         } catch (_) {
           return {
-            error: `Element with selector "${selector}" is not a fillable element (must be INPUT, TEXTAREA, SELECT, or contenteditable)`,
+            error: `Element with selector "${selector}" is not a fillable element (must be INPUT, TEXTAREA, SELECT, or contenteditable); to press a button or link use chrome_click_element`,
             elementInfo,
           };
         }
