@@ -135,7 +135,10 @@ export abstract class BaseBrowserToolExecutor implements ToolExecutor {
       return response;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      console.error(
+      // warn, not error: this is rethrown to the caller and ends up in the tool
+      // result, and console.error would also file it under chrome://extensions
+      // Errors, where expected refusals (e.g. fill on a <button>) are just noise.
+      console.warn(
         `Error sending message to tab ${tabId} for action ${message?.action || 'unknown'}: ${errorMessage}`,
       );
 
