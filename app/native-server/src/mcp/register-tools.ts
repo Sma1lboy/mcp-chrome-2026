@@ -5,7 +5,11 @@ import {
   ListToolsRequestSchema,
 } from '@modelcontextprotocol/sdk/types.js';
 import nativeMessagingHostInstance from '../native-messaging-host';
-import { NativeMessageType, TOOL_NAMES, TOOL_SCHEMAS } from '@ethanwilkins/chrome-mcp-shared-2026';
+import {
+  NativeMessageType,
+  TOOL_NAMES,
+  TOOL_SCHEMAS_EN,
+} from '@ethanwilkins/chrome-mcp-shared-2026';
 import { randomUUID } from 'node:crypto';
 
 interface ToolActivity {
@@ -82,7 +86,9 @@ type ToolProgressReporter = (progress: Record<string, unknown>) => void | Promis
 export const setupTools = (server: Server) => {
   // List tools handler
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    return { tools: TOOL_SCHEMAS };
+    // Agents are English-first, so the served catalog is the EN one; tools.ts
+    // stays the source of truth and a test keeps the two in step.
+    return { tools: TOOL_SCHEMAS_EN };
   });
 
   // Call tool handler

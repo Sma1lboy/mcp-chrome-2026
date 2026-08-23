@@ -235,7 +235,8 @@ class SelectAllItemsTool extends BaseBrowserToolExecutor {
         renderedCardCount: current.cardCount,
         renderedCheckboxCount: current.checkboxCount,
         selectedRenderedCount: current.selectedCount,
-        message: '已滚动到列表底部并逐个勾选当前已渲染的卡片；返回数量是 DOM 当前实际确认到的数量。',
+        message:
+          'Scrolled to the end of the list and ticked each rendered card; the count is what the DOM actually confirmed.',
       };
     })()`;
   }
