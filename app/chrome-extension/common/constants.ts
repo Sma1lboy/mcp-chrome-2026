@@ -58,8 +58,7 @@ export const SUCCESS_MESSAGES = {
 
 // External Links
 export const LINKS = {
-  TROUBLESHOOTING:
-    'https://github.com/phoenixlucky/mcp-chrome-2026/blob/master/docs/TROUBLESHOOTING.md',
+  TROUBLESHOOTING: 'https://github.com/Sma1lboy/mcp-chrome-2026',
 } as const;
 
 // File Extensions and MIME Types

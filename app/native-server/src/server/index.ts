@@ -23,13 +23,6 @@ import { StreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/
 import { randomUUID } from 'node:crypto';
 import { isInitializeRequest } from '@modelcontextprotocol/sdk/types.js';
 import { getMcpServer } from '../mcp/mcp-server';
-import { AgentStreamManager } from '../agent/stream-manager';
-import { AgentChatService } from '../agent/chat-service';
-import { CodexEngine } from '../agent/engines/codex';
-import { ClaudeEngine } from '../agent/engines/claude';
-import { DeepSeekEngine } from '../agent/engines/deepseek';
-import { closeDb } from '../agent/db';
-import { registerAgentRoutes } from './routes';
 import { TOOL_SCHEMAS } from '@ethanwilkins/chrome-mcp-shared-2026';
 import packageJson from '../../package.json';
 import { getRecentToolCalls } from '../mcp/register-tools';
@@ -65,16 +58,9 @@ export class Server {
   private startedAt = Date.now();
   private reclaimedSessions = 0;
   private cleanupTimer: NodeJS.Timeout | null = null;
-  private agentStreamManager: AgentStreamManager;
-  private agentChatService: AgentChatService;
 
   constructor() {
     this.fastify = Fastify({ logger: SERVER_CONFIG.LOGGER_ENABLED });
-    this.agentStreamManager = new AgentStreamManager();
-    this.agentChatService = new AgentChatService({
-      engines: [new CodexEngine(), new ClaudeEngine(), new DeepSeekEngine()],
-      streamManager: this.agentStreamManager,
-    });
     this.setupPlugins();
     this.setupRoutes();
   }
@@ -110,12 +96,6 @@ export class Server {
 
     // Extension communication
     this.setupExtensionRoutes();
-
-    // Agent routes (delegated to separate module)
-    registerAgentRoutes(this.fastify, {
-      streamManager: this.agentStreamManager,
-      chatService: this.agentChatService,
-    });
 
     // MCP routes
     this.setupMcpRoutes();
@@ -450,11 +430,9 @@ export class Server {
       if (this.cleanupTimer) clearInterval(this.cleanupTimer);
       this.cleanupTimer = null;
       await this.fastify.close();
-      closeDb();
       this.isRunning = false;
     } catch (err) {
       this.isRunning = false;
-      closeDb();
       throw err;
     }
   }

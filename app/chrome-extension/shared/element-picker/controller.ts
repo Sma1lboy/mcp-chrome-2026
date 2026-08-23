@@ -8,12 +8,12 @@
  * - Cancel/Confirm actions
  */
 
-import { Disposer } from '@/entrypoints/web-editor-v2/utils/disposables';
+import { Disposer } from './disposables';
 import {
   mountQuickPanelShadowHost,
   type QuickPanelShadowHostElements,
   type QuickPanelShadowHostManager,
-} from '@/shared/quick-panel/ui';
+} from './shadow-host';
 import type { PickedElement } from '@ethanwilkins/chrome-mcp-shared-2026';
 
 // ============================================================

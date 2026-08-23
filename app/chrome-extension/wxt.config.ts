@@ -60,59 +60,11 @@ export default defineConfig({
       'storage',
       'declarativeNetRequest',
       'alarms',
-      // Allow programmatic control of Chrome Side Panel
-      'sidePanel',
     ],
     host_permissions: ['<all_urls>'],
-    options_ui: {
-      page: 'options.html',
-      open_in_tab: true,
-    },
     action: {
       default_popup: 'popup.html',
       default_title: 'Rove',
-    },
-    // Chrome Side Panel entry for workflow management
-    // Ref: https://developer.chrome.com/docs/extensions/reference/api/sidePanel
-    side_panel: {
-      default_path: 'sidepanel.html',
-    },
-    // Keyboard shortcuts for quick triggers
-    commands: {
-      // run_quick_trigger_1: {
-      //   suggested_key: { default: 'Ctrl+Shift+1' },
-      //   description: 'Run quick trigger 1',
-      // },
-      // run_quick_trigger_2: {
-      //   suggested_key: { default: 'Ctrl+Shift+2' },
-      //   description: 'Run quick trigger 2',
-      // },
-      // run_quick_trigger_3: {
-      //   suggested_key: { default: 'Ctrl+Shift+3' },
-      //   description: 'Run quick trigger 3',
-      // },
-      // open_workflow_sidepanel: {
-      //   suggested_key: { default: 'Ctrl+Shift+O' },
-      //   description: 'Open workflow sidepanel',
-      // },
-      toggle_web_editor: {
-        description: 'Toggle Web Editor mode',
-      },
-      toggle_quick_panel: {
-        description: 'Toggle Quick Panel AI Chat',
-      },
-      start_page_recording: {
-        suggested_key: { default: 'Ctrl+Shift+1', mac: 'Command+Shift+1' },
-        description: 'Start page recording',
-      },
-      toggle_page_recording_pause: {
-        suggested_key: { default: 'Ctrl+Shift+2', mac: 'Command+Shift+2' },
-        description: 'Pause or resume page recording',
-      },
-      stop_page_recording: {
-        suggested_key: { default: 'Ctrl+Shift+3', mac: 'Command+Shift+3' },
-        description: 'Stop page recording',
-      },
     },
     web_accessible_resources: [
       {

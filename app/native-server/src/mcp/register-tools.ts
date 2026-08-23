@@ -6,7 +6,6 @@ import {
 } from '@modelcontextprotocol/sdk/types.js';
 import nativeMessagingHostInstance from '../native-messaging-host';
 import { NativeMessageType, TOOL_NAMES, TOOL_SCHEMAS } from '@ethanwilkins/chrome-mcp-shared-2026';
-import type { Tool } from '@modelcontextprotocol/sdk/types.js';
 import { randomUUID } from 'node:crypto';
 
 interface ToolActivity {
@@ -79,69 +78,10 @@ export function workspaceFromClientName(clientName?: string): string | undefined
 const MIN_TOOL_TRANSPORT_TIMEOUT_MS = 20_000;
 type ToolProgressReporter = (progress: Record<string, unknown>) => void | Promise<void>;
 
-async function listDynamicFlowTools(): Promise<Tool[]> {
-  try {
-    const response = await nativeMessagingHostInstance.sendRequestToExtensionAndWait(
-      {},
-      'rr_list_published_flows',
-      20000,
-    );
-    if (response && response.status === 'success' && Array.isArray(response.items)) {
-      const tools: Tool[] = [];
-      for (const item of response.items) {
-        const name = `flow.${item.slug}`;
-        const description =
-          (item.meta && item.meta.tool && item.meta.tool.description) ||
-          item.description ||
-          'Recorded flow';
-        const properties: Record<string, any> = {};
-        const required: string[] = [];
-        for (const v of item.variables || []) {
-          const desc = v.label || v.key;
-          const typ = (v.type || 'string').toLowerCase();
-          const prop: any = { description: desc };
-          if (typ === 'boolean') prop.type = 'boolean';
-          else if (typ === 'number') prop.type = 'number';
-          else if (typ === 'enum') {
-            prop.type = 'string';
-            if (v.rules && Array.isArray(v.rules.enum)) prop.enum = v.rules.enum;
-          } else if (typ === 'array') {
-            // default array of strings; can extend with itemType later
-            prop.type = 'array';
-            prop.items = { type: 'string' };
-          } else {
-            prop.type = 'string';
-          }
-          if (v.default !== undefined) prop.default = v.default;
-          if (v.rules && v.rules.required) required.push(v.key);
-          properties[v.key] = prop;
-        }
-        // Run options
-        properties['tabTarget'] = { type: 'string', enum: ['current', 'new'], default: 'current' };
-        properties['refresh'] = { type: 'boolean', default: false };
-        properties['captureNetwork'] = { type: 'boolean', default: false };
-        properties['returnLogs'] = { type: 'boolean', default: false };
-        properties['timeoutMs'] = { type: 'number', minimum: 0 };
-        const tool: Tool = {
-          name,
-          description,
-          inputSchema: { type: 'object', properties, required },
-        };
-        tools.push(tool);
-      }
-      return tools;
-    }
-    return [];
-  } catch (e) {
-    return [];
-  }
-}
-
 export const setupTools = (server: Server) => {
   // List tools handler
   server.setRequestHandler(ListToolsRequestSchema, async () => {
-    const dynamicTools = await listDynamicFlowTools();
-    return { tools: [...TOOL_SCHEMAS, ...dynamicTools] };
+    return { tools: TOOL_SCHEMAS };
   });
 
   // Call tool handler
@@ -202,7 +142,7 @@ function serialByTab<T>(
   task: () => Promise<T>,
   onStart?: () => void,
 ): Promise<T> {
-  if (args.newWindow || (!WRITE_TOOL.test(name) && !name.startsWith('flow.'))) {
+  if (args.newWindow || !WRITE_TOOL.test(name)) {
     onStart?.();
     return task();
   }
@@ -294,64 +234,9 @@ const handleToolCall = async (
       args = { ...args, workspace: sessionWorkspace || FALLBACK_WORKSPACE };
     if (RECENT_TAB_DEFAULT_TOOLS.has(name))
       args = await resolveRecentOrActiveTab(args, signal, activity.requestId);
-    if (WRITE_TOOL.test(name) && !name.startsWith('flow.') && !SELF_RESOLVING_WRITE_TOOLS.has(name))
+    if (WRITE_TOOL.test(name) && !SELF_RESOLVING_WRITE_TOOLS.has(name))
       args = await resolveWriteTab(args, signal);
     activity.tabId = args.tabId;
-    // If calling a dynamic flow tool (name starts with flow.), proxy to common flow-run tool
-    if (name && name.startsWith('flow.')) {
-      // We need to resolve flow by slug to ID
-      try {
-        const resp = await nativeMessagingHostInstance.sendRequestToExtensionAndWait(
-          {},
-          'rr_list_published_flows',
-          20000,
-        );
-        const items = (resp && resp.items) || [];
-        const slug = name.slice('flow.'.length);
-        const match = items.find((it: any) => it.slug === slug);
-        if (!match) throw new Error(`Flow not found for tool ${name}`);
-        const flowArgs = { flowId: match.id, args };
-        const queuedAt = Date.now();
-        const proxyRes = await serialByTab(
-          name,
-          args,
-          () =>
-            nativeMessagingHostInstance.sendRequestToExtensionAndWait(
-              flowArgs,
-              'rr_run_flow',
-              timeoutFor('flow.run', args),
-              signal,
-              reportProgress,
-            ),
-          () => {
-            activity.queueMs = Date.now() - queuedAt;
-            activity.executionStartedAt = new Date().toISOString();
-          },
-        );
-        if (proxyRes.status === 'success') {
-          activity.outcome = 'success';
-          return proxyRes.data;
-        }
-        activity.outcome = 'error';
-        activity.error = proxyRes.error;
-        return {
-          content: [{ type: 'text', text: `Error calling dynamic flow tool: ${proxyRes.error}` }],
-          isError: true,
-        };
-      } catch (err: any) {
-        activity.outcome = 'error';
-        activity.error = err?.message || String(err);
-        return {
-          content: [
-            {
-              type: 'text',
-              text: `Error resolving dynamic flow tool: ${err?.message || String(err)}`,
-            },
-          ],
-          isError: true,
-        };
-      }
-    }
     // 发送请求到Chrome扩展并等待响应
     const queuedAt = Date.now();
     const response = await serialByTab(
