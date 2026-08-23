@@ -232,6 +232,10 @@ const handleToolCall = async (
       args.tabId === undefined
     )
       args = { ...args, workspace: sessionWorkspace || FALLBACK_WORKSPACE };
+    // chrome_workspace without a name means *this* session's group. Without
+    // this default, `cleanup` wiped every agent's group on the machine.
+    if (name === TOOL_NAMES.BROWSER.WORKSPACE && args.name === undefined)
+      args = { ...args, name: sessionWorkspace || FALLBACK_WORKSPACE };
     if (RECENT_TAB_DEFAULT_TOOLS.has(name))
       args = await resolveRecentOrActiveTab(args, signal, activity.requestId);
     if (WRITE_TOOL.test(name) && !SELF_RESOLVING_WRITE_TOOLS.has(name))

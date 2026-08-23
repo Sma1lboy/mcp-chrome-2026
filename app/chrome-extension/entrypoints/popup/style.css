@@ -44,8 +44,13 @@ body {
   margin: 0;
   padding: 0;
 }
+/* Popup sizes itself to the body, so 360px is the panel width; opened as a
+   page the same markup centres in a column instead of pinning to the corner. */
+html {
+  min-width: 360px;
+}
 body {
-  width: 360px;
+  min-height: 100vh;
   color: var(--ink);
   font: 13px/1.45 var(--serif);
   background:

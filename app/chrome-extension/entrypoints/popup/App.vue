@@ -231,6 +231,9 @@ onUnmounted(() => {
 
 <style scoped>
 .rove {
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
   padding: 18px 18px 14px;
   display: flex;
   flex-direction: column;
