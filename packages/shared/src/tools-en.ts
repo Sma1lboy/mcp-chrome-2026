@@ -1064,11 +1064,13 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         tabIds: {
           type: 'array',
           items: { type: 'number' },
-          description: 'Array of tab IDs to close. If not provided, will close the active tab.',
+          description:
+            'Array of tab IDs to close. Pass tabIds or url; with neither the call is refused — it will never close the tab the user is on.',
         },
         url: {
           type: 'string',
-          description: 'Close tabs matching this URL. Can be used instead of tabIds.',
+          description:
+            'Close tabs matching this URL. Can be used instead of tabIds; only matches inside your own workspace tab group.',
         },
       },
       required: [],

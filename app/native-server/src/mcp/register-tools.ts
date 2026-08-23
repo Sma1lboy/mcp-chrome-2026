@@ -12,6 +12,7 @@ interface ToolActivity {
   requestId: string;
   name: string;
   tabId?: number;
+  workspace?: string;
   startedAt: string;
   queueMs?: number;
   executionStartedAt?: string;
@@ -179,10 +180,17 @@ async function resolveWriteTab(args: any, signal?: AbortSignal): Promise<any> {
   return { ...args, tabId };
 }
 
-function getRecentTargetTabId(excludeRequestId: string): number | undefined {
+// Only this session's own calls count: the server is shared by every agent on
+// the machine, so an unscoped search would hand agent B the tab agent A just
+// touched — usually the tab that agent is mid-task on.
+function getRecentTargetTabId(
+  excludeRequestId: string,
+  workspace: string | undefined,
+): number | undefined {
   for (let i = recentToolCalls.length - 1; i >= 0; i--) {
     const call = recentToolCalls[i];
     if (call.requestId === excludeRequestId) continue;
+    if (call.workspace !== workspace) continue;
     if (typeof call.tabId === 'number' && call.outcome !== 'cancelled') return call.tabId;
   }
   return undefined;
@@ -192,10 +200,11 @@ async function resolveRecentOrActiveTab(
   args: any,
   signal: AbortSignal | undefined,
   excludeRequestId: string,
+  workspace: string | undefined,
 ): Promise<any> {
   if (typeof args.tabId === 'number' || args.newWindow || Array.isArray(args.tabIds)) return args;
 
-  const recentTabId = getRecentTargetTabId(excludeRequestId);
+  const recentTabId = getRecentTargetTabId(excludeRequestId, workspace);
   if (typeof recentTabId === 'number') return { ...args, tabId: recentTabId };
 
   const response = await nativeMessagingHostInstance.sendRequestToExtensionAndWait(
@@ -222,6 +231,7 @@ const handleToolCall = async (
     name,
     startedAt: new Date().toISOString(),
     outcome: 'running',
+    workspace: sessionWorkspace || FALLBACK_WORKSPACE,
   };
   recentToolCalls.push(activity);
   if (recentToolCalls.length > 100) recentToolCalls.shift();
@@ -236,8 +246,11 @@ const handleToolCall = async (
     // this default, `cleanup` wiped every agent's group on the machine.
     if (name === TOOL_NAMES.BROWSER.WORKSPACE && args.name === undefined)
       args = { ...args, name: sessionWorkspace || FALLBACK_WORKSPACE };
+    // A URL sweep must not reach outside the caller's own tab group.
+    if (name === TOOL_NAMES.BROWSER.CLOSE_TABS && args.workspace === undefined)
+      args = { ...args, workspace: sessionWorkspace || FALLBACK_WORKSPACE };
     if (RECENT_TAB_DEFAULT_TOOLS.has(name))
-      args = await resolveRecentOrActiveTab(args, signal, activity.requestId);
+      args = await resolveRecentOrActiveTab(args, signal, activity.requestId, activity.workspace);
     if (WRITE_TOOL.test(name) && !SELF_RESOLVING_WRITE_TOOLS.has(name))
       args = await resolveWriteTab(args, signal);
     activity.tabId = args.tabId;

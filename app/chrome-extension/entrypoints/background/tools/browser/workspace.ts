@@ -78,6 +78,11 @@ async function readLiveMap(): Promise<WorkspaceMap> {
  * Return the group ID for `name`, creating a collapsed group (with a blank
  * placeholder tab, since an empty group cannot exist) when it is missing.
  */
+/** The group id for an existing workspace, or undefined if it has none yet. */
+export async function findWorkspaceGroup(name: string): Promise<number | undefined> {
+  return (await readLiveMap())[name];
+}
+
 export async function ensureWorkspaceGroup(name = DEFAULT_WORKSPACE): Promise<number> {
   const map = await readLiveMap();
   const existing = map[name];

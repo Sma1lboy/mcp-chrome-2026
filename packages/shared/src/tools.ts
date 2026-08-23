@@ -1048,11 +1048,13 @@ export const TOOL_SCHEMAS: Tool[] = [
         tabIds: {
           type: 'array',
           items: { type: 'number' },
-          description: '要关闭的标签页 ID 数组。未提供时关闭当前激活标签页。',
+          description:
+            '要关闭的标签页 ID 数组。必须传 tabIds 或 url,不传则拒绝执行——不会去关用户当前的标签页。',
         },
         url: {
           type: 'string',
-          description: '关闭匹配该 URL 的标签页。可替代 tabIds 使用。',
+          description:
+            '关闭匹配该 URL 的标签页。可替代 tabIds 使用;只在你自己的 workspace 标签组内匹配。',
         },
       },
       required: [],

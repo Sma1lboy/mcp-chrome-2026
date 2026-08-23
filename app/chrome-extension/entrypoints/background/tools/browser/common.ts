@@ -4,6 +4,7 @@ import { TOOL_NAMES } from '@ethanwilkins/chrome-mcp-shared-2026';
 import { captureFrameOnAction, isAutoCaptureActive } from './gif-recorder';
 import { ensureWorkspaceGroup } from './workspace';
 import { cdpSessionManager } from '@/utils/cdp-session-manager';
+import { findWorkspaceGroup } from './workspace';
 
 // Default window dimensions
 const DEFAULT_WINDOW_WIDTH = 1280;
@@ -529,6 +530,8 @@ export const navigateTool = new NavigateTool();
 interface CloseTabsToolParams {
   tabIds?: number[];
   url?: string;
+  /** Caller's workspace group; a URL sweep never reaches outside it. */
+  workspace?: string;
 }
 
 /**
@@ -538,7 +541,7 @@ class CloseTabsTool extends BaseBrowserToolExecutor {
   name = TOOL_NAMES.BROWSER.CLOSE_TABS;
 
   async execute(args: CloseTabsToolParams): Promise<ToolResult> {
-    const { tabIds, url } = args;
+    const { tabIds, url, workspace } = args;
     let urlPattern = url;
     console.log(`Attempting to close tabs with options:`, args);
 
@@ -571,7 +574,15 @@ class CloseTabsTool extends BaseBrowserToolExecutor {
               : `${urlPattern}/*`;
         }
 
-        const tabs = await chrome.tabs.query({ url: urlPattern });
+        // No group yet means this caller has opened no tabs, so nothing of its
+        // own can match — never widen the sweep to every window.
+        const groupId = workspace ? await findWorkspaceGroup(workspace) : undefined;
+        const tabs =
+          workspace && typeof groupId !== 'number'
+            ? []
+            : await chrome.tabs.query(
+                typeof groupId === 'number' ? { url: urlPattern, groupId } : { url: urlPattern },
+              );
 
         if (!tabs || tabs.length === 0) {
           console.log(`No tabs found with URL pattern: ${urlPattern}`);
@@ -673,30 +684,11 @@ class CloseTabsTool extends BaseBrowserToolExecutor {
         };
       }
 
-      // If no tabIds or URL provided, close the current active tab
-      console.log('No tabIds or URL provided, closing active tab');
-      const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-
-      if (!activeTab || !activeTab.id) {
-        return createErrorResponse('No active tab found');
-      }
-
-      await chrome.tabs.remove(activeTab.id);
-
-      return {
-        content: [
-          {
-            type: 'text',
-            text: JSON.stringify({
-              success: true,
-              message: 'Closed active tab',
-              closedCount: 1,
-              closedTabIds: [activeTab.id],
-            }),
-          },
-        ],
-        isError: false,
-      };
+      // The active tab is almost always the user's, not the agent's: refuse
+      // rather than guess. Agents already know their own tab ids.
+      return createErrorResponse(
+        "chrome_close_tabs needs tabIds or url. It will not close the active tab, which is usually the user's.",
+      );
     } catch (error) {
       console.error('Error in CloseTabsTool.execute:', error);
       return createErrorResponse(
