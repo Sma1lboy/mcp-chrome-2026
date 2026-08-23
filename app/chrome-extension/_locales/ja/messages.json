@@ -73,5 +73,644 @@
   },
   "bookmarksBarLabel": {
     "message": "ブックマークバー"
+  },
+  "ovStateRunning": {
+    "message": "実行中"
+  },
+  "ovStateDone": {
+    "message": "完了"
+  },
+  "ovStateFailed": {
+    "message": "失敗"
+  },
+  "ovIntent": {
+    "message": "意図"
+  },
+  "ovColon": {
+    "message": "："
+  },
+  "ovSemicolon": {
+    "message": "；"
+  },
+  "ovClick": {
+    "message": "クリック"
+  },
+  "ovExpand": {
+    "message": "展開"
+  },
+  "ovCollapse": {
+    "message": "折りたたむ"
+  },
+  "ovScrollTo": {
+    "message": "スクロール先"
+  },
+  "ovSeconds": {
+    "message": "$P1$ 秒",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovTargetFallback": {
+    "message": "現在の対象"
+  },
+  "ovElementRef": {
+    "message": "要素参照 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovCoordinates": {
+    "message": "座標 ($P1$, $P2$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovTarget_chrome_fill_or_select": {
+    "message": "対象"
+  },
+  "ovTarget_chrome_extract": {
+    "message": "抽出範囲"
+  },
+  "ovTarget_chrome_get_page_text": {
+    "message": "本文取得"
+  },
+  "ovTarget_chrome_spa_fetch": {
+    "message": "SPA 抽出"
+  },
+  "ovTarget_chrome_screenshot": {
+    "message": "撮影"
+  },
+  "ovTarget_chrome_upload_file": {
+    "message": "アップロード先"
+  },
+  "ovLabel_chrome_scroll": {
+    "message": "スクロール"
+  },
+  "ovLabel_chrome_click_element": {
+    "message": "クリック"
+  },
+  "ovLabel_chrome_click_and_wait": {
+    "message": "クリックして待機"
+  },
+  "ovLabel_chrome_fill_or_select": {
+    "message": "入力・選択"
+  },
+  "ovLabel_chrome_get_interactive_elements": {
+    "message": "要素検索"
+  },
+  "ovLabel_chrome_request_element_selection": {
+    "message": "要素選択"
+  },
+  "ovLabel_chrome_wait": {
+    "message": "待機"
+  },
+  "ovLabel_chrome_extract": {
+    "message": "データ抽出"
+  },
+  "ovLabel_chrome_navigate": {
+    "message": "ページを開く"
+  },
+  "ovLabel_get_windows_and_tabs": {
+    "message": "タブ取得"
+  },
+  "ovLabel_search_tabs_content": {
+    "message": "コンテンツ検索"
+  },
+  "ovLabel_chrome_screenshot": {
+    "message": "スクリーンショット"
+  },
+  "ovLabel_chrome_close_tabs": {
+    "message": "タブを閉じる"
+  },
+  "ovLabel_chrome_switch_tab": {
+    "message": "タブ切替"
+  },
+  "ovLabel_chrome_get_web_content": {
+    "message": "ページ読取"
+  },
+  "ovLabel_chrome_keyboard": {
+    "message": "キーボード入力"
+  },
+  "ovLabel_chrome_upload_file": {
+    "message": "ファイルアップロード"
+  },
+  "ovLabel_chrome_read_page": {
+    "message": "ページ読取"
+  },
+  "ovLabel_chrome_get_page_text": {
+    "message": "本文取得"
+  },
+  "ovLabel_chrome_spa_fetch": {
+    "message": "SPA 抽出"
+  },
+  "ovLabel_chrome_network_capture": {
+    "message": "ネットワーク記録"
+  },
+  "ovLabel_chrome_network_capture_start": {
+    "message": "記録開始"
+  },
+  "ovLabel_chrome_network_capture_stop": {
+    "message": "記録停止"
+  },
+  "ovLabel_chrome_network_debugger_start": {
+    "message": "記録開始"
+  },
+  "ovLabel_chrome_network_debugger_stop": {
+    "message": "記録停止"
+  },
+  "ovLabel_chrome_network_request": {
+    "message": "ネットワーク要求"
+  },
+  "ovLabel_chrome_history": {
+    "message": "履歴検索"
+  },
+  "ovLabel_chrome_bookmark_search": {
+    "message": "ブックマーク検索"
+  },
+  "ovLabel_chrome_bookmark_add": {
+    "message": "ブックマーク追加"
+  },
+  "ovLabel_chrome_bookmark_delete": {
+    "message": "ブックマーク削除"
+  },
+  "ovLabel_chrome_handle_dialog": {
+    "message": "ダイアログ処理"
+  },
+  "ovLabel_chrome_handle_download": {
+    "message": "ダウンロード処理"
+  },
+  "ovLabel_chrome_computer": {
+    "message": "疑似操作"
+  },
+  "ovLabel_chrome_post_to_x": {
+    "message": "X に投稿"
+  },
+  "ovLabel_chrome_javascript": {
+    "message": "スクリプト実行"
+  },
+  "ovLabel_chrome_paste_text": {
+    "message": "疑似貼り付け"
+  },
+  "ovLabel_chrome_console": {
+    "message": "コンソール取得"
+  },
+  "ovLabel_chrome_userscript": {
+    "message": "ユーザースクリプト管理"
+  },
+  "ovLabel_performance_start_trace": {
+    "message": "トレース開始"
+  },
+  "ovLabel_performance_stop_trace": {
+    "message": "トレース停止"
+  },
+  "ovLabel_performance_analyze_insight": {
+    "message": "トレース解析"
+  },
+  "ovLabel_chrome_gif_recorder": {
+    "message": "GIF 録画"
+  },
+  "ovLabel_chrome_get_tab_url": {
+    "message": "URL 取得"
+  },
+  "ovLabel_chrome_proxy_rotate": {
+    "message": "IP ローテーション"
+  },
+  "ovLabel_chrome_get_scroll_state": {
+    "message": "スクロール状態取得"
+  },
+  "ovLabel_chrome_block_images": {
+    "message": "画像ブロック"
+  },
+  "ovDetail_get_windows_and_tabs": {
+    "message": "すべてのウィンドウとタブを取得"
+  },
+  "ovDetail_search_tabs_content": {
+    "message": "検索：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_search_tabs_content_fallback": {
+    "message": "タブの内容"
+  },
+  "ovDetail_chrome_screenshot_full": {
+    "message": "ページ全体を撮影"
+  },
+  "ovDetail_chrome_screenshot_target": {
+    "message": "撮影：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_close_tabs": {
+    "message": "$P1$ 件のタブを閉じる",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_switch_tab": {
+    "message": "タブ #$P1$ に切替",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_switch_tab_current": {
+    "message": "現在"
+  },
+  "ovDetail_chrome_get_web_content": {
+    "message": "$P1$ を取得：$P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_get_interactive_elements": {
+    "message": "操作可能な要素を検索"
+  },
+  "ovDetail_chrome_get_interactive_elements_query": {
+    "message": "操作可能な要素を検索：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_request_element_selection": {
+    "message": "$P1$ を選択（最大 $P2$）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_request_element_selection_fallback": {
+    "message": "ページ要素"
+  },
+  "ovDetail_chrome_request_element_selection_more": {
+    "message": " ほか"
+  },
+  "ovDetail_chrome_request_element_selection_join": {
+    "message": "、"
+  },
+  "ovDetail_chrome_click_element": {
+    "message": "対象：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_click_and_wait": {
+    "message": "クリック：$P1$；$P2$ の $P3$ を待機（最大 $P4$）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      },
+      "p4": {
+        "content": "$4"
+      }
+    }
+  },
+  "ovDetail_chrome_click_and_wait_fallback": {
+    "message": "対象要素"
+  },
+  "ovDetail_chrome_wait": {
+    "message": "$P1$ の $P2$ を待機（最大 $P3$）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
+  "ovDetail_chrome_fill_or_select": {
+    "message": "対象：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_keyboard": {
+    "message": "$P1$ にキー入力を送信（内容は非表示）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_upload_file": {
+    "message": "ファイルをアップロード：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_read_page_interactive": {
+    "message": "操作可能な要素を取得"
+  },
+  "ovDetail_chrome_read_page_visible": {
+    "message": "表示中の要素を取得"
+  },
+  "ovDetail_chrome_get_page_text": {
+    "message": "本文を取得：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_spa_fetch": {
+    "message": "SPA 抽出：$P1$（$P2$ 回スクロール）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_extract": {
+    "message": "抽出範囲：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_bottom": {
+    "message": "最下部へスクロール"
+  },
+  "ovDetail_chrome_scroll_top": {
+    "message": "最上部へスクロール"
+  },
+  "ovDetail_chrome_scroll_bottom_in": {
+    "message": "$P1$ 内を最下部へスクロール",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_top_in": {
+    "message": "$P1$ 内を最上部へスクロール",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_into_view": {
+    "message": "スクロール先：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_by": {
+    "message": "$P1$ に $P2$px スクロール",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_by_in": {
+    "message": "$P1$ 内を $P2$ に $P3$px スクロール",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_down": {
+    "message": "下"
+  },
+  "ovDetail_chrome_navigate": {
+    "message": "移動先：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_navigate_fallback": {
+    "message": "対象ページ"
+  },
+  "ovDetail_chrome_network_capture_start": {
+    "message": "ネットワーク記録を開始"
+  },
+  "ovDetail_chrome_network_capture_stop": {
+    "message": "ネットワーク記録を停止"
+  },
+  "ovDetail_chrome_block_images_start": {
+    "message": "画像リクエストをブロック"
+  },
+  "ovDetail_chrome_block_images_stop": {
+    "message": "画像リクエストを再開"
+  },
+  "ovDetail_chrome_network_request": {
+    "message": "$P1$ リクエストを送信",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_history": {
+    "message": "履歴を検索"
+  },
+  "ovDetail_chrome_history_query": {
+    "message": "履歴を検索：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_bookmark_search": {
+    "message": "ブックマークを検索"
+  },
+  "ovDetail_chrome_bookmark_search_query": {
+    "message": "ブックマークを検索：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_bookmark_add": {
+    "message": "ブックマークを追加"
+  },
+  "ovDetail_chrome_bookmark_delete": {
+    "message": "ブックマークを削除"
+  },
+  "ovDetail_chrome_handle_dialog_accept": {
+    "message": "ダイアログを承認"
+  },
+  "ovDetail_chrome_handle_dialog_dismiss": {
+    "message": "ダイアログを閉じる"
+  },
+  "ovDetail_chrome_handle_download": {
+    "message": "ダウンロードを処理"
+  },
+  "ovDetail_chrome_handle_download_action": {
+    "message": "ダウンロードを処理：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_computer": {
+    "message": "疑似 $P1$ 操作：$P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_computer_fallback": {
+    "message": "マウス"
+  },
+  "ovDetail_chrome_post_to_x": {
+    "message": "X に投稿：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_post_to_x_fallback": {
+    "message": "本文"
+  },
+  "ovDetail_chrome_javascript": {
+    "message": "ページスクリプトを実行（内容は非表示）"
+  },
+  "ovDetail_chrome_paste_text": {
+    "message": "$P1$ に疑似貼り付け",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_console": {
+    "message": "ページのコンソールを取得"
+  },
+  "ovDetail_chrome_userscript": {
+    "message": "ユーザースクリプト管理：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_userscript_fallback": {
+    "message": "操作"
+  },
+  "ovDetail_performance_start_trace": {
+    "message": "パフォーマンス計測を開始"
+  },
+  "ovDetail_performance_start_trace_reload": {
+    "message": "パフォーマンス計測を開始して再読み込み"
+  },
+  "ovDetail_performance_stop_trace": {
+    "message": "パフォーマンス計測を停止"
+  },
+  "ovDetail_performance_analyze_insight": {
+    "message": "計測結果を解析"
+  },
+  "ovDetail_chrome_gif_recorder": {
+    "message": "GIF 録画を$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_gif_recorder_duration": {
+    "message": "GIF 録画を$P1$（$P2$）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_gif_recorder_fallback": {
+    "message": "開始"
+  },
+  "ovDetail_chrome_get_tab_url": {
+    "message": "現在のタブの URL を取得"
+  },
+  "ovDetail_chrome_proxy_rotate": {
+    "message": "プロキシを切り替えて再読み込み"
+  },
+  "ovDetail_chrome_proxy_rotate_reason": {
+    "message": "プロキシを切り替えて再読み込み：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_get_scroll_state": {
+    "message": "スクロール状態を取得"
+  },
+  "ovDetail_chrome_get_web_content_text": {
+    "message": "テキスト"
   }
 }

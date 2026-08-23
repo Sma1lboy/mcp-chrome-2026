@@ -73,5 +73,644 @@
   },
   "bookmarksBarLabel": {
     "message": "书签栏"
+  },
+  "ovStateRunning": {
+    "message": "执行中"
+  },
+  "ovStateDone": {
+    "message": "完成"
+  },
+  "ovStateFailed": {
+    "message": "失败"
+  },
+  "ovIntent": {
+    "message": "意图"
+  },
+  "ovColon": {
+    "message": "："
+  },
+  "ovSemicolon": {
+    "message": "；"
+  },
+  "ovClick": {
+    "message": "点击"
+  },
+  "ovExpand": {
+    "message": "展开"
+  },
+  "ovCollapse": {
+    "message": "收起"
+  },
+  "ovScrollTo": {
+    "message": "滚动到"
+  },
+  "ovSeconds": {
+    "message": "$P1$ 秒",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovTargetFallback": {
+    "message": "当前目标"
+  },
+  "ovElementRef": {
+    "message": "元素引用 $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovCoordinates": {
+    "message": "坐标 ($P1$, $P2$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovTarget_chrome_fill_or_select": {
+    "message": "目标"
+  },
+  "ovTarget_chrome_extract": {
+    "message": "提取范围"
+  },
+  "ovTarget_chrome_get_page_text": {
+    "message": "读取正文"
+  },
+  "ovTarget_chrome_spa_fetch": {
+    "message": "SPA 提取"
+  },
+  "ovTarget_chrome_screenshot": {
+    "message": "截取"
+  },
+  "ovTarget_chrome_upload_file": {
+    "message": "上传到"
+  },
+  "ovLabel_chrome_scroll": {
+    "message": "滚动"
+  },
+  "ovLabel_chrome_click_element": {
+    "message": "点击"
+  },
+  "ovLabel_chrome_click_and_wait": {
+    "message": "点击并等待"
+  },
+  "ovLabel_chrome_fill_or_select": {
+    "message": "输入或选择"
+  },
+  "ovLabel_chrome_get_interactive_elements": {
+    "message": "搜索元素"
+  },
+  "ovLabel_chrome_request_element_selection": {
+    "message": "选择范围"
+  },
+  "ovLabel_chrome_wait": {
+    "message": "等待"
+  },
+  "ovLabel_chrome_extract": {
+    "message": "提取数据"
+  },
+  "ovLabel_chrome_navigate": {
+    "message": "打开页面"
+  },
+  "ovLabel_get_windows_and_tabs": {
+    "message": "读取标签页"
+  },
+  "ovLabel_search_tabs_content": {
+    "message": "搜索内容"
+  },
+  "ovLabel_chrome_screenshot": {
+    "message": "截图"
+  },
+  "ovLabel_chrome_close_tabs": {
+    "message": "关闭标签页"
+  },
+  "ovLabel_chrome_switch_tab": {
+    "message": "切换标签页"
+  },
+  "ovLabel_chrome_get_web_content": {
+    "message": "读取网页"
+  },
+  "ovLabel_chrome_keyboard": {
+    "message": "键盘输入"
+  },
+  "ovLabel_chrome_upload_file": {
+    "message": "上传文件"
+  },
+  "ovLabel_chrome_read_page": {
+    "message": "读取页面"
+  },
+  "ovLabel_chrome_get_page_text": {
+    "message": "读取正文"
+  },
+  "ovLabel_chrome_spa_fetch": {
+    "message": "SPA 提取"
+  },
+  "ovLabel_chrome_network_capture": {
+    "message": "网络抓包"
+  },
+  "ovLabel_chrome_network_capture_start": {
+    "message": "开始抓包"
+  },
+  "ovLabel_chrome_network_capture_stop": {
+    "message": "停止抓包"
+  },
+  "ovLabel_chrome_network_debugger_start": {
+    "message": "开始抓包"
+  },
+  "ovLabel_chrome_network_debugger_stop": {
+    "message": "停止抓包"
+  },
+  "ovLabel_chrome_network_request": {
+    "message": "网络请求"
+  },
+  "ovLabel_chrome_history": {
+    "message": "搜索历史"
+  },
+  "ovLabel_chrome_bookmark_search": {
+    "message": "搜索书签"
+  },
+  "ovLabel_chrome_bookmark_add": {
+    "message": "添加书签"
+  },
+  "ovLabel_chrome_bookmark_delete": {
+    "message": "删除书签"
+  },
+  "ovLabel_chrome_handle_dialog": {
+    "message": "处理对话框"
+  },
+  "ovLabel_chrome_handle_download": {
+    "message": "处理下载"
+  },
+  "ovLabel_chrome_computer": {
+    "message": "模拟操作"
+  },
+  "ovLabel_chrome_post_to_x": {
+    "message": "发布 X 帖子"
+  },
+  "ovLabel_chrome_javascript": {
+    "message": "执行脚本"
+  },
+  "ovLabel_chrome_paste_text": {
+    "message": "合成粘贴"
+  },
+  "ovLabel_chrome_console": {
+    "message": "读取控制台"
+  },
+  "ovLabel_chrome_userscript": {
+    "message": "管理用户脚本"
+  },
+  "ovLabel_performance_start_trace": {
+    "message": "开始性能追踪"
+  },
+  "ovLabel_performance_stop_trace": {
+    "message": "停止性能追踪"
+  },
+  "ovLabel_performance_analyze_insight": {
+    "message": "分析性能"
+  },
+  "ovLabel_chrome_gif_recorder": {
+    "message": "GIF 录制"
+  },
+  "ovLabel_chrome_get_tab_url": {
+    "message": "读取地址"
+  },
+  "ovLabel_chrome_proxy_rotate": {
+    "message": "轮换 IP"
+  },
+  "ovLabel_chrome_get_scroll_state": {
+    "message": "读取滚动状态"
+  },
+  "ovLabel_chrome_block_images": {
+    "message": "图片拦截"
+  },
+  "ovDetail_get_windows_and_tabs": {
+    "message": "读取所有窗口和标签页"
+  },
+  "ovDetail_search_tabs_content": {
+    "message": "搜索：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_search_tabs_content_fallback": {
+    "message": "标签页内容"
+  },
+  "ovDetail_chrome_screenshot_full": {
+    "message": "截取整页"
+  },
+  "ovDetail_chrome_screenshot_target": {
+    "message": "截取：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_close_tabs": {
+    "message": "关闭 $P1$ 个标签页",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_switch_tab": {
+    "message": "切换到标签页 #$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_switch_tab_current": {
+    "message": "当前"
+  },
+  "ovDetail_chrome_get_web_content": {
+    "message": "读取 $P1$：$P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_get_interactive_elements": {
+    "message": "搜索可交互元素"
+  },
+  "ovDetail_chrome_get_interactive_elements_query": {
+    "message": "搜索可交互元素：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_request_element_selection": {
+    "message": "选择 $P1$（最多 $P2$）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_request_element_selection_fallback": {
+    "message": "页面元素"
+  },
+  "ovDetail_chrome_request_element_selection_more": {
+    "message": " 等"
+  },
+  "ovDetail_chrome_request_element_selection_join": {
+    "message": "、"
+  },
+  "ovDetail_chrome_click_element": {
+    "message": "目标：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_click_and_wait": {
+    "message": "点击：$P1$；等待 $P2$ $P3$（最多 $P4$）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      },
+      "p4": {
+        "content": "$4"
+      }
+    }
+  },
+  "ovDetail_chrome_click_and_wait_fallback": {
+    "message": "目标元素"
+  },
+  "ovDetail_chrome_wait": {
+    "message": "等待 $P1$ $P2$（最多 $P3$）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
+  "ovDetail_chrome_fill_or_select": {
+    "message": "目标：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_keyboard": {
+    "message": "向 $P1$ 发送键盘输入（内容已隐藏）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_upload_file": {
+    "message": "上传文件到：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_read_page_interactive": {
+    "message": "读取页面交互元素"
+  },
+  "ovDetail_chrome_read_page_visible": {
+    "message": "读取页面可见元素"
+  },
+  "ovDetail_chrome_get_page_text": {
+    "message": "读取正文：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_spa_fetch": {
+    "message": "SPA 提取：$P1$（$P2$ 次滚动）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_extract": {
+    "message": "提取范围：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_bottom": {
+    "message": "滚动到底部"
+  },
+  "ovDetail_chrome_scroll_top": {
+    "message": "滚动到顶部"
+  },
+  "ovDetail_chrome_scroll_bottom_in": {
+    "message": "在 $P1$ 中滚动到底部",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_top_in": {
+    "message": "在 $P1$ 中滚动到顶部",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_into_view": {
+    "message": "滚动到：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_by": {
+    "message": "向 $P1$ 滚动 $P2$px",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_by_in": {
+    "message": "在 $P1$ 中向 $P2$ 滚动 $P3$px",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_down": {
+    "message": "下"
+  },
+  "ovDetail_chrome_navigate": {
+    "message": "前往：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_navigate_fallback": {
+    "message": "目标页面"
+  },
+  "ovDetail_chrome_network_capture_start": {
+    "message": "开始网络抓包"
+  },
+  "ovDetail_chrome_network_capture_stop": {
+    "message": "停止网络抓包"
+  },
+  "ovDetail_chrome_block_images_start": {
+    "message": "阻止图片网络请求"
+  },
+  "ovDetail_chrome_block_images_stop": {
+    "message": "恢复图片网络请求"
+  },
+  "ovDetail_chrome_network_request": {
+    "message": "发起 $P1$ 网络请求",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_history": {
+    "message": "搜索历史记录"
+  },
+  "ovDetail_chrome_history_query": {
+    "message": "搜索历史记录：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_bookmark_search": {
+    "message": "搜索书签"
+  },
+  "ovDetail_chrome_bookmark_search_query": {
+    "message": "搜索书签：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_bookmark_add": {
+    "message": "添加书签"
+  },
+  "ovDetail_chrome_bookmark_delete": {
+    "message": "删除书签"
+  },
+  "ovDetail_chrome_handle_dialog_accept": {
+    "message": "确认页面对话框"
+  },
+  "ovDetail_chrome_handle_dialog_dismiss": {
+    "message": "关闭页面对话框"
+  },
+  "ovDetail_chrome_handle_download": {
+    "message": "处理下载"
+  },
+  "ovDetail_chrome_handle_download_action": {
+    "message": "处理下载：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_computer": {
+    "message": "模拟 $P1$ 操作：$P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_computer_fallback": {
+    "message": "鼠标"
+  },
+  "ovDetail_chrome_post_to_x": {
+    "message": "发布 X 帖子：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_post_to_x_fallback": {
+    "message": "正文"
+  },
+  "ovDetail_chrome_javascript": {
+    "message": "执行页面脚本（内容已隐藏）"
+  },
+  "ovDetail_chrome_paste_text": {
+    "message": "向 $P1$ 合成粘贴文本",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_console": {
+    "message": "读取页面控制台"
+  },
+  "ovDetail_chrome_userscript": {
+    "message": "管理用户脚本：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_userscript_fallback": {
+    "message": "操作"
+  },
+  "ovDetail_performance_start_trace": {
+    "message": "开始性能追踪"
+  },
+  "ovDetail_performance_start_trace_reload": {
+    "message": "开始性能追踪并刷新页面"
+  },
+  "ovDetail_performance_stop_trace": {
+    "message": "停止性能追踪"
+  },
+  "ovDetail_performance_analyze_insight": {
+    "message": "分析性能追踪结果"
+  },
+  "ovDetail_chrome_gif_recorder": {
+    "message": "$P1$ GIF 录制",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_gif_recorder_duration": {
+    "message": "$P1$ GIF 录制（$P2$）",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_gif_recorder_fallback": {
+    "message": "开始"
+  },
+  "ovDetail_chrome_get_tab_url": {
+    "message": "读取当前标签页地址"
+  },
+  "ovDetail_chrome_proxy_rotate": {
+    "message": "轮换代理并刷新页面"
+  },
+  "ovDetail_chrome_proxy_rotate_reason": {
+    "message": "轮换代理并刷新页面：$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_get_scroll_state": {
+    "message": "读取滚动状态"
+  },
+  "ovDetail_chrome_get_web_content_text": {
+    "message": "文本"
   }
 }

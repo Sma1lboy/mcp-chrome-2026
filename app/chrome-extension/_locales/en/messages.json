@@ -73,5 +73,644 @@
   },
   "bookmarksBarLabel": {
     "message": "Bookmarks Bar"
+  },
+  "ovStateRunning": {
+    "message": "Running"
+  },
+  "ovStateDone": {
+    "message": "Done"
+  },
+  "ovStateFailed": {
+    "message": "Failed"
+  },
+  "ovIntent": {
+    "message": "Intent"
+  },
+  "ovColon": {
+    "message": ": "
+  },
+  "ovSemicolon": {
+    "message": "; "
+  },
+  "ovClick": {
+    "message": "Click"
+  },
+  "ovExpand": {
+    "message": "Expand"
+  },
+  "ovCollapse": {
+    "message": "Collapse"
+  },
+  "ovScrollTo": {
+    "message": "Scroll to"
+  },
+  "ovSeconds": {
+    "message": "$P1$s",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovTargetFallback": {
+    "message": "current target"
+  },
+  "ovElementRef": {
+    "message": "element ref $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovCoordinates": {
+    "message": "coordinates ($P1$, $P2$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovTarget_chrome_fill_or_select": {
+    "message": "Target"
+  },
+  "ovTarget_chrome_extract": {
+    "message": "Extract from"
+  },
+  "ovTarget_chrome_get_page_text": {
+    "message": "Read text"
+  },
+  "ovTarget_chrome_spa_fetch": {
+    "message": "SPA fetch"
+  },
+  "ovTarget_chrome_screenshot": {
+    "message": "Capture"
+  },
+  "ovTarget_chrome_upload_file": {
+    "message": "Upload to"
+  },
+  "ovLabel_chrome_scroll": {
+    "message": "Scroll"
+  },
+  "ovLabel_chrome_click_element": {
+    "message": "Click"
+  },
+  "ovLabel_chrome_click_and_wait": {
+    "message": "Click and wait"
+  },
+  "ovLabel_chrome_fill_or_select": {
+    "message": "Fill or select"
+  },
+  "ovLabel_chrome_get_interactive_elements": {
+    "message": "Find elements"
+  },
+  "ovLabel_chrome_request_element_selection": {
+    "message": "Pick elements"
+  },
+  "ovLabel_chrome_wait": {
+    "message": "Wait"
+  },
+  "ovLabel_chrome_extract": {
+    "message": "Extract data"
+  },
+  "ovLabel_chrome_navigate": {
+    "message": "Open page"
+  },
+  "ovLabel_get_windows_and_tabs": {
+    "message": "Read tabs"
+  },
+  "ovLabel_search_tabs_content": {
+    "message": "Search content"
+  },
+  "ovLabel_chrome_screenshot": {
+    "message": "Screenshot"
+  },
+  "ovLabel_chrome_close_tabs": {
+    "message": "Close tabs"
+  },
+  "ovLabel_chrome_switch_tab": {
+    "message": "Switch tab"
+  },
+  "ovLabel_chrome_get_web_content": {
+    "message": "Read page"
+  },
+  "ovLabel_chrome_keyboard": {
+    "message": "Keyboard"
+  },
+  "ovLabel_chrome_upload_file": {
+    "message": "Upload file"
+  },
+  "ovLabel_chrome_read_page": {
+    "message": "Read page"
+  },
+  "ovLabel_chrome_get_page_text": {
+    "message": "Read text"
+  },
+  "ovLabel_chrome_spa_fetch": {
+    "message": "SPA fetch"
+  },
+  "ovLabel_chrome_network_capture": {
+    "message": "Network capture"
+  },
+  "ovLabel_chrome_network_capture_start": {
+    "message": "Start capture"
+  },
+  "ovLabel_chrome_network_capture_stop": {
+    "message": "Stop capture"
+  },
+  "ovLabel_chrome_network_debugger_start": {
+    "message": "Start capture"
+  },
+  "ovLabel_chrome_network_debugger_stop": {
+    "message": "Stop capture"
+  },
+  "ovLabel_chrome_network_request": {
+    "message": "Network request"
+  },
+  "ovLabel_chrome_history": {
+    "message": "Search history"
+  },
+  "ovLabel_chrome_bookmark_search": {
+    "message": "Search bookmarks"
+  },
+  "ovLabel_chrome_bookmark_add": {
+    "message": "Add bookmark"
+  },
+  "ovLabel_chrome_bookmark_delete": {
+    "message": "Delete bookmark"
+  },
+  "ovLabel_chrome_handle_dialog": {
+    "message": "Handle dialog"
+  },
+  "ovLabel_chrome_handle_download": {
+    "message": "Handle download"
+  },
+  "ovLabel_chrome_computer": {
+    "message": "Synthetic input"
+  },
+  "ovLabel_chrome_post_to_x": {
+    "message": "Post to X"
+  },
+  "ovLabel_chrome_javascript": {
+    "message": "Run script"
+  },
+  "ovLabel_chrome_paste_text": {
+    "message": "Synthetic paste"
+  },
+  "ovLabel_chrome_console": {
+    "message": "Read console"
+  },
+  "ovLabel_chrome_userscript": {
+    "message": "Manage userscripts"
+  },
+  "ovLabel_performance_start_trace": {
+    "message": "Start trace"
+  },
+  "ovLabel_performance_stop_trace": {
+    "message": "Stop trace"
+  },
+  "ovLabel_performance_analyze_insight": {
+    "message": "Analyse trace"
+  },
+  "ovLabel_chrome_gif_recorder": {
+    "message": "GIF recording"
+  },
+  "ovLabel_chrome_get_tab_url": {
+    "message": "Read URL"
+  },
+  "ovLabel_chrome_proxy_rotate": {
+    "message": "Rotate IP"
+  },
+  "ovLabel_chrome_get_scroll_state": {
+    "message": "Read scroll state"
+  },
+  "ovLabel_chrome_block_images": {
+    "message": "Image blocking"
+  },
+  "ovDetail_get_windows_and_tabs": {
+    "message": "Reading every window and tab"
+  },
+  "ovDetail_search_tabs_content": {
+    "message": "Searching: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_search_tabs_content_fallback": {
+    "message": "tab content"
+  },
+  "ovDetail_chrome_screenshot_full": {
+    "message": "Capturing the full page"
+  },
+  "ovDetail_chrome_screenshot_target": {
+    "message": "Capturing: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_close_tabs": {
+    "message": "Closing $P1$ tabs",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_switch_tab": {
+    "message": "Switching to tab #$P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_switch_tab_current": {
+    "message": "current"
+  },
+  "ovDetail_chrome_get_web_content": {
+    "message": "Reading $P1$: $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_get_interactive_elements": {
+    "message": "Finding interactive elements"
+  },
+  "ovDetail_chrome_get_interactive_elements_query": {
+    "message": "Finding interactive elements: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_request_element_selection": {
+    "message": "Picking $P1$ (up to $P2$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_request_element_selection_fallback": {
+    "message": "page elements"
+  },
+  "ovDetail_chrome_request_element_selection_more": {
+    "message": " and more"
+  },
+  "ovDetail_chrome_request_element_selection_join": {
+    "message": ", "
+  },
+  "ovDetail_chrome_click_element": {
+    "message": "Target: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_click_and_wait": {
+    "message": "Click: $P1$; waiting for $P2$ $P3$ (up to $P4$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      },
+      "p4": {
+        "content": "$4"
+      }
+    }
+  },
+  "ovDetail_chrome_click_and_wait_fallback": {
+    "message": "the target element"
+  },
+  "ovDetail_chrome_wait": {
+    "message": "Waiting for $P1$ $P2$ (up to $P3$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
+  "ovDetail_chrome_fill_or_select": {
+    "message": "Target: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_keyboard": {
+    "message": "Sending keystrokes to $P1$ (content hidden)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_upload_file": {
+    "message": "Uploading a file to: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_read_page_interactive": {
+    "message": "Reading interactive elements"
+  },
+  "ovDetail_chrome_read_page_visible": {
+    "message": "Reading visible elements"
+  },
+  "ovDetail_chrome_get_page_text": {
+    "message": "Reading text: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_spa_fetch": {
+    "message": "SPA fetch: $P1$ ($P2$ scrolls)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_extract": {
+    "message": "Extracting from: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_bottom": {
+    "message": "Scrolling to the bottom"
+  },
+  "ovDetail_chrome_scroll_top": {
+    "message": "Scrolling to the top"
+  },
+  "ovDetail_chrome_scroll_bottom_in": {
+    "message": "Scrolling to the bottom of $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_top_in": {
+    "message": "Scrolling to the top of $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_into_view": {
+    "message": "Scrolling to: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_by": {
+    "message": "Scrolling $P1$ by $P2$px",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_by_in": {
+    "message": "Scrolling $P1$ $P2$ by $P3$px",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      },
+      "p3": {
+        "content": "$3"
+      }
+    }
+  },
+  "ovDetail_chrome_scroll_down": {
+    "message": "down"
+  },
+  "ovDetail_chrome_navigate": {
+    "message": "Going to: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_navigate_fallback": {
+    "message": "the target page"
+  },
+  "ovDetail_chrome_network_capture_start": {
+    "message": "Starting network capture"
+  },
+  "ovDetail_chrome_network_capture_stop": {
+    "message": "Stopping network capture"
+  },
+  "ovDetail_chrome_block_images_start": {
+    "message": "Blocking image requests"
+  },
+  "ovDetail_chrome_block_images_stop": {
+    "message": "Unblocking image requests"
+  },
+  "ovDetail_chrome_network_request": {
+    "message": "Sending a $P1$ request",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_history": {
+    "message": "Searching history"
+  },
+  "ovDetail_chrome_history_query": {
+    "message": "Searching history: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_bookmark_search": {
+    "message": "Searching bookmarks"
+  },
+  "ovDetail_chrome_bookmark_search_query": {
+    "message": "Searching bookmarks: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_bookmark_add": {
+    "message": "Adding a bookmark"
+  },
+  "ovDetail_chrome_bookmark_delete": {
+    "message": "Deleting a bookmark"
+  },
+  "ovDetail_chrome_handle_dialog_accept": {
+    "message": "Accepting the page dialog"
+  },
+  "ovDetail_chrome_handle_dialog_dismiss": {
+    "message": "Dismissing the page dialog"
+  },
+  "ovDetail_chrome_handle_download": {
+    "message": "Handling a download"
+  },
+  "ovDetail_chrome_handle_download_action": {
+    "message": "Handling a download: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_computer": {
+    "message": "Synthetic $P1$: $P2$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_computer_fallback": {
+    "message": "mouse"
+  },
+  "ovDetail_chrome_post_to_x": {
+    "message": "Posting to X: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_post_to_x_fallback": {
+    "message": "the post body"
+  },
+  "ovDetail_chrome_javascript": {
+    "message": "Running a page script (content hidden)"
+  },
+  "ovDetail_chrome_paste_text": {
+    "message": "Synthetic paste into $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_console": {
+    "message": "Reading the page console"
+  },
+  "ovDetail_chrome_userscript": {
+    "message": "Managing userscripts: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_userscript_fallback": {
+    "message": "action"
+  },
+  "ovDetail_performance_start_trace": {
+    "message": "Starting a performance trace"
+  },
+  "ovDetail_performance_start_trace_reload": {
+    "message": "Starting a performance trace and reloading"
+  },
+  "ovDetail_performance_stop_trace": {
+    "message": "Stopping the performance trace"
+  },
+  "ovDetail_performance_analyze_insight": {
+    "message": "Analysing the trace"
+  },
+  "ovDetail_chrome_gif_recorder": {
+    "message": "$P1$ GIF recording",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_gif_recorder_duration": {
+    "message": "$P1$ GIF recording ($P2$)",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      },
+      "p2": {
+        "content": "$2"
+      }
+    }
+  },
+  "ovDetail_chrome_gif_recorder_fallback": {
+    "message": "Start"
+  },
+  "ovDetail_chrome_get_tab_url": {
+    "message": "Reading the current tab URL"
+  },
+  "ovDetail_chrome_proxy_rotate": {
+    "message": "Rotating the proxy and reloading"
+  },
+  "ovDetail_chrome_proxy_rotate_reason": {
+    "message": "Rotating the proxy and reloading: $P1$",
+    "placeholders": {
+      "p1": {
+        "content": "$1"
+      }
+    }
+  },
+  "ovDetail_chrome_get_scroll_state": {
+    "message": "Reading scroll state"
+  },
+  "ovDetail_chrome_get_web_content_text": {
+    "message": "text"
   }
 }
