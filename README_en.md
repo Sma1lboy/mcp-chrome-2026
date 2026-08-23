@@ -1,281 +1,62 @@
 <p align="center">
-  <img src="app/chrome-extension/public/icon/128.png" alt="Rove in Chrome" width="96" height="96" />
+  <img src="app/chrome-extension/public/icon/128.png" alt="Rove" width="80" height="80" />
 </p>
-
 <h1 align="center">Rove in Chrome</h1>
-
-<p align="center">
-  <b>Bridge AI agents with your Chrome browser</b><br />
-  A Model Context Protocol server that exposes 70 browser capabilities to AI assistants
-</p>
-
-<p align="center">
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT" /></a>
-  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.8+-blue.svg?style=flat-square" alt="TypeScript" /></a>
-  <a href="https://developer.chrome.com/docs/extensions/"><img src="https://img.shields.io/badge/Chrome-Extension-green.svg?style=flat-square" alt="Chrome Extension" /></a>
-  <a href="https://www.npmjs.com/package/@ethanwilkins/mcp-chrome-bridge-2026"><img src="https://img.shields.io/npm/v/@ethanwilkins/mcp-chrome-bridge-2026?style=flat-square" alt="npm" /></a>
-  <a href="https://github.com/phoenixlucky/mcp-chrome-2026/releases"><img src="https://img.shields.io/github/v/release/phoenixlucky/mcp-chrome-2026?style=flat-square" alt="GitHub Release" /></a>
-</p>
-
-<p align="center">
-  <b>
-    <a href="README.md">🇨🇳 中文</a> ·
-    <a href="README_en.md">🇬🇧 English</a>
-  </b>
-</p>
+<p align="center">An MCP bridge that hands your own Chrome to agents. Logged-in sessions, cookies, extensions, a real browser fingerprint — no headless browser on the side.</p>
+<p align="center"><a href="README.md">中文</a></p>
 
 ---
 
-## 📢 What's New in v2.1.1
+## What it is
 
-> **Node 24 support + build fixes** — Runtime environment upgrade.
->
-> - 🟢 **Node 24 requirement** — The project and launcher scripts (bat/sh) now require Node 24, pinned in `.nvmrc`; launching under an older Node prints a switch hint
-> - 🔧 **Jest config fix** — native-server tests fixed for NodeNext module resolution; builds and tests run reliably on Node 24
-> - 🔧 All packages bumped to v2.1.1
+A Chrome extension plus a local native host. Agents connect over MCP (`http://127.0.0.1:12306/mcp`) and get 160+ browser tools: navigate, read pages, click and fill, screenshots, network capture, cookies, bookmarks and history, performance traces, semantic search across tabs — all inside **the Chrome you are already using**.
 
-> See the [full changelog](docs/CHANGELOG.md) for all version changes.
+Several agents can be connected at once. Tabs an agent opens land in its own tab group (named after the MCP client), it never steals your focus, and `chrome_workspace cleanup` closes the group when it is done.
 
----
+## Install
 
-## 🖼️ Screenshots
+**1. Extension**: `chrome://extensions/` → Developer mode → load `app/chrome-extension/.output/chrome-mv3` (or drop the zip from Releases).
 
-<p align="center">
-  <table style="border-collapse: collapse; width: 100%; max-width: 960px; margin: 0 auto;">
-    <tr>
-      <td align="center" style="padding: 8px 12px;"><b>Popup Window</b></td>
-      <td align="center" style="padding: 8px 12px;"><b>Builder Workflow Editor</b></td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 6px 12px;">
-        <img src="screenshots/popup-ui.webp" alt="Popup" width="100%" loading="lazy"
-             style="border-radius: 12px; border: 1px solid rgba(127,127,127,0.25); box-shadow: 0 4px 14px rgba(0,0,0,0.12);" />
-      </td>
-      <td align="center" style="padding: 6px 12px;">
-        <img src="screenshots/builder-ui.webp" alt="Builder" width="100%" loading="lazy"
-             style="border-radius: 12px; border: 1px solid rgba(127,127,127,0.25); box-shadow: 0 4px 14px rgba(0,0,0,0.12);" />
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 6px 12px; font-size: 0.9em; color: #6e7781;">Catgirl frosted glass theme,<br/>MCP tools at a glance</td>
-      <td align="center" style="padding: 6px 12px; font-size: 0.9em; color: #6e7781;">Drag-and-drop workflow builder,<br/>record & replay automation</td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 8px 12px;"><b>Quick Panel</b></td>
-      <td align="center" style="padding: 8px 12px;"><b>Smart Assistant</b></td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 6px 12px;">
-        <img src="screenshots/quick-panel.webp" alt="Quick Panel" width="100%" loading="lazy"
-             style="border-radius: 12px; border: 1px solid rgba(127,127,127,0.25); box-shadow: 0 4px 14px rgba(0,0,0,0.12);" />
-      </td>
-      <td align="center" style="padding: 6px 12px;">
-        <img src="screenshots/assistant-ui.webp" alt="Smart Assistant" width="100%" loading="lazy"
-             style="border-radius: 12px; border: 1px solid rgba(127,127,127,0.25); box-shadow: 0 4px 14px rgba(0,0,0,0.12);" />
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 6px 12px; font-size: 0.9em; color: #6e7781;">In-page quick tools,<br/>element picker & actions</td>
-      <td align="center" style="padding: 6px 12px; font-size: 0.9em; color: #6e7781;">Sidepanel chat,<br/>Claude / Codex / DeepSeek</td>
-    </tr>
-  </table>
-</p>
-
-## ✨ Features
-
-|                                                                                           |                                                                               |                                                                                 |                                                                              |
-| ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| **🤖 AI-Native Control**<br/>Claude / Cursor / VS Code<br/>operates your browser directly | **🔐 Zero Setup**<br/>Reuses your Chrome<br/>sessions & cookies instantly     | **🛡️ Fully Local**<br/>All processing on-device<br/>no data leaves your machine | **🚄 Streamable HTTP**<br/>Real-time streaming<br/>Modern MCP transport      |
-| **🧠 Semantic Search**<br/>Vector DB + local embeddings<br/>cross-tab content discovery   | **⚡ SIMD Acceleration**<br/>WASM-optimized engine<br/>4-8× faster vector ops | **📊 70 Tools**<br/>Navigation / forms<br/>bookmarks / history / network        | **🔄 Cross-Tab Ops**<br/>Multi-tab & multi-window<br/>seamless orchestration |
-
----
-
-## ⚔️ vs Playwright-based Alternatives
-
-| Dimension            | Playwright MCP                                | Chrome Extension MCP (This Project)                       |
-| -------------------- | --------------------------------------------- | --------------------------------------------------------- |
-| **Browser Process**  | Launches separate instance + downloads binary | **Uses your existing Chrome**                             |
-| **Login Sessions**   | Re-authenticate every site                    | **Automatically inherited**                               |
-| **User Environment** | Clean profile — no extensions, no settings    | **Full user profile** — everything intact                 |
-| **API Surface**      | Limited to Playwright API                     | **Full Chrome API** (tabs, bookmarks, history, downloads) |
-| **Startup Time**     | Initialize new browser (seconds)              | **Instant** (< 1s)                                        |
-| **Latency**          | 50–200ms                                      | **Lower** — in-process communication                      |
-
----
-
-## 🚀 5-Minute Setup
-
-### 1️⃣ Install the Chrome Extension
-
-Download `chrome-mcp-server-*.zip` from the [Releases page](https://github.com/phoenixlucky/mcp-chrome-2026/releases).
-
-Open `chrome://extensions/` → enable **Developer mode** → drag & drop the `.zip` to install.
-
-### 2️⃣ Install the Native Host
+**2. Native host**
 
 ```bash
-# npm (recommended — auto-registers)
-npm install -g @ethanwilkins/mcp-chrome-bridge-2026
-
-# pnpm
-pnpm install -g @ethanwilkins/mcp-chrome-bridge-2026
+npm install -g @ethanwilkins/mcp-chrome-bridge-2026   # postinstall registers the Native Messaging Host
+# manual: mcp-chrome-bridge register
 ```
 
-> `postinstall` auto-registers Native Messaging Host. Manual: `mcp-chrome-bridge register`
+**3. Connect**: click the extension icon → Connect. The popup shows the endpoint, connected agents and recent tool calls; “Copy config” gives you a paste-ready MCP entry.
 
-### 3️⃣ Start the Service
-
-```bash
-# One-click start (recommended)
-mcp-chrome-bridge start
-
-# Or via the startup script after cloning
-# Windows
-start-server.bat
-
-# macOS / Linux
-bash start-server.sh
-```
-
-The service listens on `http://127.0.0.1:12306/mcp`.
-
-### 4️⃣ Configure Your MCP Client
-
-**Streamable HTTP (Recommended)**
+## Point an agent at it
 
 ```json
 {
   "mcpServers": {
-    "chrome-mcp-server": {
-      "type": "streamableHttp",
-      "url": "http://127.0.0.1:12306/mcp"
-    }
+    "rove": { "type": "streamable-http", "url": "http://127.0.0.1:12306/mcp" }
   }
 }
 ```
 
-**STDIO (Alternative)**
+stdio alternative: `{"command": "mcp-chrome-stdio"}` (one process per harness, proxied to the same HTTP server).
 
-```json
-{
-  "mcpServers": {
-    "chrome-mcp-stdio": {
-      "command": "node",
-      "args": ["/path/to/mcp-chrome-bridge/dist/mcp/mcp-server-stdio.js"]
-    }
-  }
-}
+## Workspace isolation
+
+The MCP client's `clientInfo.name` picks the tab group and colour: `claude-code` → `claude` (orange), `Codex CLI` → `codex` (blue), `gemini` (green), `kimi` (purple), `opencode` (cyan); other names are used as-is. Precedence: explicit `workspace` argument > session client name > `MCP_WORKSPACE` env > `agent`; `workspace: ""` opts out.
+
+`chrome_navigate` defaults to `background: true`; reusing an already-open tab returns `reusedExistingTab: true`, `reuseExisting: false` forces a new one. Call `chrome_workspace` `cleanup` when the task is over.
+
+## Develop
+
+```bash
+pnpm install
+pnpm -C app/chrome-extension build     # extension → .output/chrome-mv3
+pnpm -C app/native-server build        # native host → dist/
+pnpm -C app/native-server test
 ```
 
----
+Server status: `curl http://127.0.0.1:12306/status` (sessions, recent tool calls, extension connectivity).
 
-## 🛠️ Tools at a Glance
+More: [architecture](docs/ARCHITECTURE.md) · [contributing](docs/CONTRIBUTING.md) · [changelog](docs/CHANGELOG.md)
 
-| Category                  | Count | Coverage                                                                             |
-| ------------------------- | :---: | ------------------------------------------------------------------------------------ |
-| 🖥️ **Browser Management** |   9   | Window/tab listing, navigation, switch, close, current URL, scroll, script injection |
-| 📷 **Screenshots**        |   2   | Element-level, full-page, custom viewport, GIF recording                             |
-| 🌐 **Network Monitoring** |   6   | Request capture & response wait, resource blocking, custom HTTP, download handling   |
-| 📝 **Content Analysis**   |   7   | Semantic search, HTML/text extraction, interactive elements, console capture, SPA    |
-| 🖱️ **Interaction**        |   9   | Click, fill forms, keyboard, computer ops, manual element pick, dialogs, file upload |
-| 📑 **Data Management**    |   7   | History search, bookmark CRUD, Cookie management (v1.6.4)                            |
-| 📡 **Scraping**           |  16   | Scoped/Shadow DOM/iframe, pagination, isolated task state, diagnostics, proxy rotate |
-| ⚡ **Performance**        |   3   | Trace start / stop / insight analysis                                                |
+## License
 
-📖 Full API reference: [中文](docs/TOOLS_zh.md) · [English](docs/TOOLS.md)
-
----
-
-## 🧱 Workspace isolation (agent tabs vs. your tabs)
-
-Same goal as Claude in Chrome: **the agent works in your browser without getting in your way.** The page you are reading is yours; the agent's pages live in the agent's own territory.
-
-**Automatic grouping.** Clients report `clientInfo.name` during the MCP handshake, and the server derives a group name and fixed colour from it: `claude-code` → `claude` (orange), `Codex CLI` → `codex` (blue), `gemini` (green), `kimi` (purple), `opencode` (cyan); anything else is used as-is and falls back to grey. Chrome starts exactly **one** shared native server for the whole browser, so the group has to be derived per MCP session — that is what keeps several agents on the same port in separate groups.
-
-**Override order.** Explicit `workspace` argument > session client name > `MCP_WORKSPACE` environment variable > `agent`. Passing an empty string (`workspace: ""`) opts out of grouping entirely. Under stdio each harness runs its own process, so `MCP_WORKSPACE` is usable there.
-
-**It does not hijack your tab.** `chrome_navigate` defaults to `background: true`, so it neither steals focus nor raises a window. When it reuses a tab already showing the URL, the response carries `reusedExistingTab: true`; pass `reuseExisting: false` to always open a fresh tab.
-
-**Clean up.** Call `chrome_workspace` with `cleanup` when the task is done (omit `name` to clear every MCP-created group) so no stray tabs are left behind.
-
----
-
-## 📚 Usage Guides
-
-| Guide                                               | Description                                            |
-| --------------------------------------------------- | ------------------------------------------------------ |
-| 🤖 [Smart Assistant Guide](docs/SMART_ASSISTANT.md) | Claude / Codex / DeepSeek sessions & API configuration |
-| ⚡ [Quick Tools Guide](docs/QUICK_TOOLS.md)         | Page Quick Panel & popup MCP tool catalog              |
-
----
-
-## 🎬 Use Cases
-
-| Scenario                           | Prompt                                                                                           |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------ |
-| 📄 **AI Summary + Excalidraw Viz** | [excalidraw-prompt](prompt/excalidraw-prompt.md)                                                 |
-| 🖼️ **Image Analysis + Excalidraw** | [excalidraw-prompt](prompt/excalidraw-prompt.md) \| [content-analize](prompt/content-analize.md) |
-| 🎨 **Style Injection & Web Mod**   | [modify-web-prompt](prompt/modify-web.md)                                                        |
-| 📡 **Network Request Analysis**    | —                                                                                                |
-| 📊 **Browsing History Analysis**   | —                                                                                                |
-| 💬 **Web Page Conversation**       | —                                                                                                |
-| 📸 **Page & Element Screenshots**  | —                                                                                                |
-| 🔖 **Bookmark Management**         | —                                                                                                |
-| 🗑️ **Batch Tab Closure**           | —                                                                                                |
-| 🤖 **Smart Assistant Chat**        | —                                                                                                |
-| 🔄 **Workflow Record & Replay**    | —                                                                                                |
-| 🧩 **Visual Workflow Builder**     | —                                                                                                |
-| 📊 **Page Data Extraction**        | —                                                                                                |
-| ⚡ **Page Performance Analysis**   | —                                                                                                |
-| 🎥 **Record Actions as GIF**       | —                                                                                                |
-
----
-
-## 🗺️ Roadmap
-
-| ✅ Done                                                                       | 🎯 Planned                                                   |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| **70 MCP Tools** — Full browser API coverage                                  | **Auth & Permission** — API Key / OAuth                      |
-| **Streamable HTTP + STDIO** — Dual transport                                  |                                                              |
-| **Smart Assistant** — Claude / Codex / DeepSeek                               | **Monitoring Dashboard** — Web panel for calls, perf, errors |
-| **Semantic Search** — Vector DB + local embeddings                            |                                                              |
-| **SIMD Acceleration** — WASM engine 4-8× faster                               |                                                              |
-| **Workflow Recording & Replay** — v3 unified architecture (v2 fully migrated) |                                                              |
-| **Visual Editor** — Drag-and-drop workflow builder                            |                                                              |
-| **Native Messaging Auto-registration**                                        |                                                              |
-| **Cross-platform Setup** — macOS / Linux one-click scripts                    |                                                              |
-
-### 🔧 Planned Tools
-
-| Tool                                    | Description                                                                                    |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `chrome_create_tab`                     | Create new tab — supports url, windowId, active/background, pinned                             |
-| `chrome_hover`                          | Hover element — trigger hover state via CSS/XPath selector for dropdowns / tooltips / submenus |
-| `chrome_print_to_pdf`                   | Print to PDF — uses CDP Page.printToPDF, supports page/custom paper sizes                      |
-| `chrome_get_element_info`               | Element info query — get attributes, computed styles, bounding rect for a selector             |
-| `chrome_storage_get` / `set` / `delete` | Storage management — read/write localStorage / sessionStorage                                  |
-
----
-
-## 🤝 Contributing
-
-Contributions welcome! Please read [CONTRIBUTING.md](docs/CONTRIBUTING.md) before submitting a PR.
-
----
-
-## 📄 License
-
-MIT — see [LICENSE](LICENSE) for details.
-
----
-
-## 📖 Documentation
-
-| Document                 | Link                                          |
-| ------------------------ | --------------------------------------------- |
-| 🏗️ Architecture          | [ARCHITECTURE.md](docs/ARCHITECTURE.md)       |
-| 🔧 Tool API Reference    | [TOOLS.md](docs/TOOLS.md)                     |
-| 🤖 Smart Assistant Guide | [SMART_ASSISTANT.md](docs/SMART_ASSISTANT.md) |
-| ⚡ Quick Tools Guide     | [QUICK_TOOLS.md](docs/QUICK_TOOLS.md)         |
-| 🔍 Troubleshooting       | [TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) |
-| 📋 Changelog             | [CHANGELOG.md](docs/CHANGELOG.md)             |
+MIT

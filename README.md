@@ -1,281 +1,62 @@
 <p align="center">
-  <img src="app/chrome-extension/public/icon/128.png" alt="Rove in Chrome" width="96" height="96" />
+  <img src="app/chrome-extension/public/icon/128.png" alt="Rove" width="80" height="80" />
 </p>
-
 <h1 align="center">Rove in Chrome</h1>
-
-<p align="center">
-  <b>让 AI 直接操控你的 Chrome 浏览器</b><br />
-  基于 Model Context Protocol，向 AI 助手开放 70 个浏览器能力
-</p>
-
-<p align="center">
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT" /></a>
-  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-5.8+-blue.svg?style=flat-square" alt="TypeScript" /></a>
-  <a href="https://developer.chrome.com/docs/extensions/"><img src="https://img.shields.io/badge/Chrome-Extension-green.svg?style=flat-square" alt="Chrome Extension" /></a>
-  <a href="https://www.npmjs.com/package/@ethanwilkins/mcp-chrome-bridge-2026"><img src="https://img.shields.io/npm/v/@ethanwilkins/mcp-chrome-bridge-2026?style=flat-square" alt="npm" /></a>
-  <a href="https://github.com/phoenixlucky/mcp-chrome-2026/releases"><img src="https://img.shields.io/github/v/release/phoenixlucky/mcp-chrome-2026?style=flat-square" alt="GitHub Release" /></a>
-</p>
-
-<p align="center">
-  <b>
-    <a href="README.md">🇨🇳 中文</a> ·
-    <a href="README_en.md">🇬🇧 English</a>
-  </b>
-</p>
+<p align="center">把你自己的 Chrome 暴露给 agent 的 MCP 桥。登录态、cookies、扩展、真实的浏览器指纹——agent 直接用，不用再开一个无头浏览器。</p>
+<p align="center"><a href="README_en.md">English</a></p>
 
 ---
 
-## 📢 v2.1.1 更新内容
+## 它是什么
 
-> **Node 24 支持 + 构建修复** — 运行环境升级。
->
-> - 🟢 **Node 24 要求** — 项目与启动脚本（bat/sh）现在要求 Node 24，`.nvmrc` 已锁定；启动时若检测到旧版本 Node 会提示切换
-> - 🔧 **Jest 配置修复** — native-server 测试修复 NodeNext 模块解析，构建与测试在 Node 24 下稳定运行
-> - 🔧 版本统一为 v2.1.1
+一个 Chrome 扩展 + 一个本地 native host。agent 通过 MCP（`http://127.0.0.1:12306/mcp`）连进来，拿到 160+ 个浏览器工具：导航、读页、点击填表、截图、网络抓包、cookie、书签历史、性能 trace、语义搜索标签页……全部跑在**你正在用的那个 Chrome** 里。
 
-> 查看 [完整更新日志](docs/CHANGELOG.md) 了解所有版本变更。
+多个 agent 可以同时连。每个 agent 开的标签页自动归进自己的 tab group（按 MCP 客户端名分组），不抢你的焦点，收工时 `chrome_workspace cleanup` 一键收摊。
 
----
+## 安装
 
-## 🖼️ 界面预览
+**1. 扩展**：`chrome://extensions/` → 开发者模式 → 加载 `app/chrome-extension/.output/chrome-mv3`（或从 Releases 下载 zip 拖入）。
 
-<p align="center">
-  <table style="border-collapse: collapse; width: 100%; max-width: 960px; margin: 0 auto;">
-    <tr>
-      <td align="center" style="padding: 8px 12px;"><b>Popup 弹窗</b></td>
-      <td align="center" style="padding: 8px 12px;"><b>Builder 工作流编辑器</b></td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 6px 12px;">
-        <img src="screenshots/popup-ui.webp" alt="Popup 弹窗" width="100%" loading="lazy"
-             style="border-radius: 12px; border: 1px solid rgba(127,127,127,0.25); box-shadow: 0 4px 14px rgba(0,0,0,0.12);" />
-      </td>
-      <td align="center" style="padding: 6px 12px;">
-        <img src="screenshots/builder-ui.webp" alt="Builder 工作流编辑器" width="100%" loading="lazy"
-             style="border-radius: 12px; border: 1px solid rgba(127,127,127,0.25); box-shadow: 0 4px 14px rgba(0,0,0,0.12);" />
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 6px 12px; font-size: 0.9em; color: #6e7781;">猫娘毛玻璃主题，<br/>MCP 工具一览</td>
-      <td align="center" style="padding: 6px 12px; font-size: 0.9em; color: #6e7781;">可视化拖拽搭建，<br/>录制回放工作流</td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 8px 12px;"><b>Quick Panel 快捷操作</b></td>
-      <td align="center" style="padding: 8px 12px;"><b>Smart Assistant 智能助手</b></td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 6px 12px;">
-        <img src="screenshots/quick-panel.webp" alt="Quick Panel 快捷操作" width="100%" loading="lazy"
-             style="border-radius: 12px; border: 1px solid rgba(127,127,127,0.25); box-shadow: 0 4px 14px rgba(0,0,0,0.12);" />
-      </td>
-      <td align="center" style="padding: 6px 12px;">
-        <img src="screenshots/assistant-ui.webp" alt="Smart Assistant 智能助手" width="100%" loading="lazy"
-             style="border-radius: 12px; border: 1px solid rgba(127,127,127,0.25); box-shadow: 0 4px 14px rgba(0,0,0,0.12);" />
-      </td>
-    </tr>
-    <tr>
-      <td align="center" style="padding: 6px 12px; font-size: 0.9em; color: #6e7781;">页面内快捷工具，<br/>快速选取与操作</td>
-      <td align="center" style="padding: 6px 12px; font-size: 0.9em; color: #6e7781;">侧边栏对话，<br/>Claude / Codex / DeepSeek</td>
-    </tr>
-  </table>
-</p>
-
-## ✨ 核心特性
-
-|                                                                     |                                                                    |                                                              |                                                               |
-| ------------------------------------------------------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------- |
-| **🤖 AI 原生控制**<br/>Claude / Cursor / VS Code<br/>直接操控浏览器 | **🔐 零配置即用**<br/>复用现有 Chrome<br/>登录态 / Cookie 即刻继承 | **🛡️ 纯本地运行**<br/>数据不出环境<br/>隐私安全有保障        | **🚄 Streamable HTTP**<br/>实时流式响应<br/>现代 MCP 传输协议 |
-| **🧠 语义搜索**<br/>向量数据库 + 本地嵌入<br/>跨标签页内容发现      | **⚡ SIMD 加速**<br/>WASM 优化引擎<br/>向量运算 4-8× 更快          | **📊 70 工具**<br/>导航 / 截图 / 表单<br/>书签 / 历史 / 网络 | **🔄 跨标签页操作**<br/>多标签 / 多窗口<br/>无缝协同管理      |
-
----
-
-## ⚔️ 与 Playwright 对比
-
-| 维度           | Playwright MCP              | Chrome 扩展 MCP（本项目）                    |
-| -------------- | --------------------------- | -------------------------------------------- |
-| **浏览器进程** | 需启动独立实例 + 下载二进制 | **直接使用你现有的 Chrome**                  |
-| **登录态**     | 每个站点重新登录            | **自动继承**，即开即用                       |
-| **用户环境**   | 干净配置文件，无扩展无设置  | **完整用户配置**，一切保留                   |
-| **API 能力**   | 限于 Playwright API         | **完整 Chrome API**（标签页/书签/历史/下载） |
-| **启动速度**   | 需初始化新浏览器（数秒）    | **即刻激活**（< 1s）                         |
-| **通信延迟**   | 50–200ms                    | **更低延迟**，进程内通信                     |
-
----
-
-## 🚀 5 分钟上手
-
-### 1️⃣ 安装 Chrome 扩展
-
-从 [Releases 页面](https://github.com/phoenixlucky/mcp-chrome-2026/releases) 下载 `chrome-mcp-server-*.zip`。
-
-打开 `chrome://extensions/` → 开启 **开发者模式** → 拖入 `.zip` 安装。
-
-### 2️⃣ 安装 Native Host
+**2. Native host**
 
 ```bash
-# npm（推荐，自动注册）
-npm install -g @ethanwilkins/mcp-chrome-bridge-2026
-
-# pnpm
-pnpm install -g @ethanwilkins/mcp-chrome-bridge-2026
+npm install -g @ethanwilkins/mcp-chrome-bridge-2026   # postinstall 自动注册 Native Messaging Host
+# 手动注册：mcp-chrome-bridge register
 ```
 
-> `postinstall` 自动注册 Native Messaging Host。如需手动注册：`mcp-chrome-bridge register`
+**3. 连接**：点扩展图标 → Connect。弹窗里显示端点、在线 agent 数和最近的工具调用，“复制配置”拿到可粘贴的 MCP 配置。
 
-### 3️⃣ 启动服务
-
-```bash
-# 一键启动（推荐）
-mcp-chrome-bridge start
-
-# 或克隆仓库后用脚本
-# Windows
-start-server.bat
-
-# macOS / Linux
-bash start-server.sh
-```
-
-服务将在 `http://127.0.0.1:12306/mcp` 监听。
-
-### 4️⃣ 配置客户端
-
-**Streamable HTTP（推荐）**
+## 接入 agent
 
 ```json
 {
   "mcpServers": {
-    "chrome-mcp-server": {
-      "type": "streamableHttp",
-      "url": "http://127.0.0.1:12306/mcp"
-    }
+    "rove": { "type": "streamable-http", "url": "http://127.0.0.1:12306/mcp" }
   }
 }
 ```
 
-**STDIO（备选）**
+stdio 备选：`{"command": "mcp-chrome-stdio"}`（每个 harness 独立进程，代理到同一个 HTTP 服务）。
 
-```json
-{
-  "mcpServers": {
-    "chrome-mcp-stdio": {
-      "command": "node",
-      "args": ["/path/to/mcp-chrome-bridge/dist/mcp/mcp-server-stdio.js"]
-    }
-  }
-}
+## Workspace 隔离
+
+MCP 握手时客户端上报 `clientInfo.name`，服务端据此分组并固定颜色：`claude-code` → `claude`（橙）、`Codex CLI` → `codex`（蓝）、`gemini`（绿）、`kimi`（紫）、`opencode`（青），其他名字原样使用。覆盖顺序：显式 `workspace` 参数 > session 客户端名 > 环境变量 `MCP_WORKSPACE` > `agent`；`workspace: ""` 表示退出分组。
+
+`chrome_navigate` 默认 `background: true`，不抢焦点；复用已打开的同 URL 标签页时返回 `reusedExistingTab: true`，`reuseExisting: false` 强制新开。任务结束用 `chrome_workspace` 的 `cleanup` 关掉自己那一组。
+
+## 开发
+
+```bash
+pnpm install
+pnpm -C app/chrome-extension build     # 扩展 → .output/chrome-mv3
+pnpm -C app/native-server build        # native host → dist/
+pnpm -C app/native-server test
 ```
 
----
+服务状态：`curl http://127.0.0.1:12306/status`（session 数、最近工具调用、扩展连接状态）。
 
-## 🛠️ 工具一览
+更多：[架构](docs/ARCHITECTURE_zh.md) · [贡献](docs/CONTRIBUTING_zh.md) · [变更](docs/CHANGELOG.md)
 
-| 分类              | 数量 | 覆盖能力                                                             |
-| ----------------- | :--: | -------------------------------------------------------------------- |
-| 🖥️ **浏览器管理** |  9   | 窗口/标签页列表、导航、切换、关闭、当前 URL、滚动、脚本注入          |
-| 📷 **截图**       |  2   | 元素级、全页面、自定义视口、GIF 录制                                 |
-| 🌐 **网络监控**   |  6   | 指定标签抓包与响应等待、精确资源拦截、自定义 HTTP、下载处理          |
-| 📝 **内容分析**   |  7   | 语义搜索、HTML / 文本提取、交互元素检测、控制台日志、SPA 内容        |
-| 🖱️ **交互操作**   |  9   | 点击、表单填充、键盘输入、计算机操作、人工选元素、对话框、上传       |
-| 📑 **数据管理**   |  7   | 历史搜索、书签增删查、Cookie 管理 (v1.6.4)                           |
-| 📡 **采集提取**   |  16  | 作用域/Shadow DOM/iframe、受控分页、隔离任务状态、诊断快照、代理轮换 |
-| ⚡ **性能诊断**   |  3   | Trace 录制 / 停止 / 洞察分析                                         |
+## 许可证
 
-📖 完整 API 参考：[中文](docs/TOOLS_zh.md) · [English](docs/TOOLS.md)
-
----
-
-## 🧱 Workspace 隔离（agent 与用户网页分离）
-
-设计目标和 Claude in Chrome 一致：**agent 在你的浏览器里干活，但不打扰你**。你正在看的页面属于你，agent 的页面归 agent 自己的地盘。
-
-**自动分组。** MCP 握手时客户端会上报 `clientInfo.name`，服务端据此推导组名并固定颜色：`claude-code` → `claude`（橙）、`Codex CLI` → `codex`（蓝）、`gemini`（绿）、`kimi`（紫）、`opencode`（青），其他名字原样使用并落到灰色。Chrome 只会为整个浏览器拉起**一个**共享的 native server，所以组名必须按 MCP session 区分——同一个端口上的多个 agent 因此各自成组。
-
-**覆盖顺序。** 显式 `workspace` 参数 > session 客户端名 > 环境变量 `MCP_WORKSPACE` > `agent`。传空串 `workspace: ""` 表示显式退出分组。stdio 模式下每个 harness 是独立进程，`MCP_WORKSPACE` 在那里可用。
-
-**不劫持你的标签页。** `chrome_navigate` 默认 `background: true`，不抢焦点、不激活窗口。复用已打开的同 URL 标签页时响应会带 `reusedExistingTab: true`；传 `reuseExisting: false` 可强制新开标签页。
-
-**收摊。** 任务结束调用 `chrome_workspace` 的 `cleanup`（不传 `name` 则清理全部 MCP 创建的组）关掉自己那一组，不留垃圾标签页。
-
----
-
-## 📚 使用指南
-
-| 指南                                          | 说明                                      |
-| --------------------------------------------- | ----------------------------------------- |
-| 🤖 [智能助手指南](docs/SMART_ASSISTANT_zh.md) | Claude / Codex / DeepSeek 会话与 API 配置 |
-| ⚡ [快捷工具指南](docs/QUICK_TOOLS_zh.md)     | 页面 Quick Panel 和插件弹窗 MCP 工具目录  |
-
----
-
-## 🎬 使用场景
-
-| 场景                               | 操作                                    |
-| ---------------------------------- | --------------------------------------- |
-| 📄 **AI 总结 + Excalidraw 可视化** | 总结页面内容并画图                      |
-| 🖼️ **图片分析 + Excalidraw 复现**  | 分析图片内容并重建                      |
-| 🎨 **样式注入与网页修改**          | 修改页面样式去广告                      |
-| 📡 **网络请求捕获分析**            | 查找 API 端点与响应结构                 |
-| 📊 **浏览历史分析**                | 分析近一个月浏览记录                    |
-| 💬 **网页对话**                    | 翻译并总结当前页面                      |
-| 📸 **页面与元素截图**              | 截取首页 / 捕获图标                     |
-| 🔖 **书签管理**                    | 将当前页添加到书签                      |
-| 🗑️ **批量关闭标签页**              | 关闭匹配关键词的标签页                  |
-| 🤖 **智能助手对话**                | 侧边栏与 Claude / Codex / DeepSeek 对话 |
-| 🔄 **工作流录制与回放**            | 录制重复操作并一键回放                  |
-| 🧩 **工作流可视化编排**            | Builder 拖拽搭建自动化流程              |
-| 📊 **页面数据采集**                | 从列表 / 虚拟滚动页提取结构化数据       |
-| ⚡ **页面性能分析**                | 录制 Trace 并分析加载瓶颈               |
-| 🎥 **操作录制为 GIF**              | 将页面交互录制成 GIF                    |
-
----
-
-## 🗺️ 路线图
-
-| ✅ 已实现                                           | 🎯 规划中                                         |
-| --------------------------------------------------- | ------------------------------------------------- |
-| **70 MCP 工具** — 浏览器全能力覆盖                  | **认证与权限管理** — API Key / OAuth 接入         |
-| **Streamable HTTP + STDIO 双传输**                  |                                                   |
-| **智能助手** — Claude / Codex / DeepSeek            | **实时监控仪表盘** — Web 面板查看调用、性能、错误 |
-| **语义搜索** — 向量数据库 + 本地嵌入                |                                                   |
-| **SIMD 加速** — WASM 引擎 4-8× 更快                 |                                                   |
-| **工作流录制与回放** — v3 统一架构（v2 已完全迁移） |                                                   |
-| **可视化编辑器** — 拖拽搭建工作流                   |                                                   |
-| **Native Messaging 自动注册**                       |                                                   |
-| **跨平台安装体验** — macOS / Linux 一键脚本         |                                                   |
-
-### 🔧 待开发工具
-
-| 工具                                    | 说明                                                                          |
-| --------------------------------------- | ----------------------------------------------------------------------------- |
-| `chrome_create_tab`                     | 新建标签页 — 支持 url、windowId、激活/后台打开、是否固定                      |
-| `chrome_hover`                          | 悬停元素 — 通过 CSS/XPath 选择器触发 hover，展开 dropdown / tooltip / submenu |
-| `chrome_print_to_pdf`                   | 打印为 PDF — 调用 CDP Page.printToPDF，支持页面/自定义纸张尺寸                |
-| `chrome_get_element_info`               | 元素信息查询 — 获取指定元素的 attributes、computed styles、bounding rect      |
-| `chrome_storage_get` / `set` / `delete` | 存储管理 — 读写 localStorage / sessionStorage                                 |
-
----
-
-## 🤝 贡献
-
-欢迎贡献！提交 PR 前请阅读 [CONTRIBUTING_zh.md](docs/CONTRIBUTING_zh.md)。
-
----
-
-## 📄 许可证
-
-MIT — 详见 [LICENSE](LICENSE) 文件。
-
----
-
-## 📖 更多文档
-
-| 文档             | 链接                                                |
-| ---------------- | --------------------------------------------------- |
-| 🏗️ 架构设计      | [ARCHITECTURE_zh.md](docs/ARCHITECTURE_zh.md)       |
-| 🔧 工具 API 参考 | [TOOLS_zh.md](docs/TOOLS_zh.md)                     |
-| 🤖 智能助手指南  | [SMART_ASSISTANT_zh.md](docs/SMART_ASSISTANT_zh.md) |
-| ⚡ 快捷工具指南  | [QUICK_TOOLS_zh.md](docs/QUICK_TOOLS_zh.md)         |
-| 🔍 故障排除      | [TROUBLESHOOTING_zh.md](docs/TROUBLESHOOTING_zh.md) |
-| 📋 更新日志      | [CHANGELOG.md](docs/CHANGELOG.md)                   |
+MIT
