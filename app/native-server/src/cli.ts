@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import './scripts/ensure-shared';
 import { program } from 'commander';
 import * as fs from 'fs';
 import * as path from 'path';

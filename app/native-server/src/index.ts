@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import './scripts/ensure-shared';
 import serverInstance from './server';
 import nativeMessagingHostInstance from './native-messaging-host';
 
@@ -23,8 +24,7 @@ process.on('SIGTERM', () => {
   process.exit(0);
 });
 
-process.on('exit', (code) => {
-});
+process.on('exit', (code) => {});
 
 process.on('uncaughtException', (error) => {
   process.exit(1);

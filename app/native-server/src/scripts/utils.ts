@@ -132,6 +132,17 @@ export async function getMainPath(): Promise<string> {
  * @param distDir - The dist directory where node_path.txt should be written
  * @param nodeExecPath - The Node.js executable path to write (defaults to current process.execPath)
  */
+/**
+ * npm >=11 skips postinstall by default, so the vendored shared runtime is also
+ * installed from the `register` command.
+ */
+export function installBundledSharedRuntime(distDir: string): void {
+  const src = path.join(distDir, 'vendor', 'chrome-mcp-shared-2026');
+  if (!fs.existsSync(src)) return;
+  const dest = path.join(distDir, '..', 'node_modules', '@ethanwilkins', 'chrome-mcp-shared-2026');
+  fs.cpSync(src, dest, { recursive: true, force: true });
+}
+
 export function writeNodePathFile(distDir: string, nodeExecPath = process.execPath): void {
   try {
     const nodePathFile = path.join(distDir, 'node_path.txt');

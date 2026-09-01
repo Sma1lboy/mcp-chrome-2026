@@ -15,13 +15,14 @@
 
 ## 安装
 
-**1. 扩展**：`chrome://extensions/` → 开发者模式 → 加载 `app/chrome-extension/.output/chrome-mv3`（或从 Releases 下载 zip 拖入）。
+**1. 扩展**：从 [Releases](https://github.com/Sma1lboy/mcp-chrome-2026/releases/latest) 下载 `rove-in-chrome-*-chrome.zip` 解压，`chrome://extensions/` → 开发者模式 → 加载解压后的目录（自己构建则加载 `app/chrome-extension/.output/chrome-mv3`）。
 
 **2. Native host**
 
 ```bash
-npm install -g @ethanwilkins/mcp-chrome-bridge-2026   # postinstall 自动注册 Native Messaging Host
-# 手动注册：mcp-chrome-bridge register
+# 同一个 Release 里的 .tgz，和扩展版本必须一致；npm 上的 @ethanwilkins/mcp-chrome-bridge-2026 是上游版本，协议不兼容
+npm install -g ./ethanwilkins-mcp-chrome-bridge-2026-<version>.tgz
+mcp-chrome-bridge register   # npm 11 默认不跑 postinstall，手动注册一次
 ```
 
 **3. 连接**：点扩展图标 → Connect。弹窗里显示端点、在线 agent 数和最近的工具调用，“复制配置”拿到可粘贴的 MCP 配置。

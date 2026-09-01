@@ -15,13 +15,14 @@ Several agents can be connected at once. Tabs an agent opens land in its own tab
 
 ## Install
 
-**1. Extension**: `chrome://extensions/` → Developer mode → load `app/chrome-extension/.output/chrome-mv3` (or drop the zip from Releases).
+**1. Extension**: download `rove-in-chrome-*-chrome.zip` from [Releases](https://github.com/Sma1lboy/mcp-chrome-2026/releases/latest), unzip, then `chrome://extensions/` → Developer mode → load the unzipped folder (or `app/chrome-extension/.output/chrome-mv3` if you build it yourself).
 
 **2. Native host**
 
 ```bash
-npm install -g @ethanwilkins/mcp-chrome-bridge-2026   # postinstall registers the Native Messaging Host
-# manual: mcp-chrome-bridge register
+# the .tgz from the same Release; it must match the extension version. The npm @ethanwilkins/mcp-chrome-bridge-2026 is upstream's and speaks a different protocol
+npm install -g ./ethanwilkins-mcp-chrome-bridge-2026-<version>.tgz
+mcp-chrome-bridge register   # npm 11 skips postinstall by default, so register once by hand
 ```
 
 **3. Connect**: click the extension icon → Connect. The popup shows the endpoint, connected agents and recent tool calls; “Copy config” gives you a paste-ready MCP entry.

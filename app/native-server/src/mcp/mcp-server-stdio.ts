@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import '../scripts/ensure-shared';
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { Client } from '@modelcontextprotocol/sdk/client/index.js';
