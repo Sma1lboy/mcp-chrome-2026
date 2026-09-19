@@ -40,6 +40,7 @@
       <ul v-if="calls.length" class="calls">
         <li v-for="c in calls" :key="c.requestId" class="call" :data-outcome="c.outcome">
           <i class="dot" />
+          <span class="mono agent" v-if="c.workspace">{{ c.workspace }}</span>
           <span class="mono name">{{ c.name }}</span>
           <span class="mono tab" v-if="c.tabId != null">#{{ c.tabId }}</span>
           <span class="mono when">{{ ago(c.startedAt) }}</span>
@@ -101,6 +102,8 @@ interface ToolCall {
   startedAt: string;
   outcome: 'running' | 'success' | 'error';
   tabId?: number;
+  /** Which agent made the call: the MCP session's clientInfo, reduced to one word. */
+  workspace?: string;
 }
 
 const markUrl = chrome.runtime.getURL('icon/48.png');
@@ -378,7 +381,7 @@ onUnmounted(() => {
 }
 .call {
   display: grid;
-  grid-template-columns: 7px 1fr auto auto;
+  grid-template-columns: 7px auto 1fr auto auto;
   align-items: center;
   gap: 8px;
   padding: 6px 10px;
@@ -411,6 +414,18 @@ onUnmounted(() => {
 .tab,
 .when {
   color: var(--muted);
+}
+/* The agent is what tells two concurrent sessions apart, so it reads ahead of
+   the tab id and timestamp without competing with the tool name. */
+.agent {
+  color: var(--fg);
+  background: var(--line);
+  border-radius: 4px;
+  padding: 0 5px;
+  max-width: 12ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .empty,
 .hint {
