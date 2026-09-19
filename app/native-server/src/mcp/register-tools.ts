@@ -11,6 +11,7 @@ import {
   TOOL_SCHEMAS_EN,
 } from '@ethanwilkins/chrome-mcp-shared-2026';
 import { randomUUID } from 'node:crypto';
+import { readLocalEnv } from '../util/local-env';
 
 interface ToolActivity {
   requestId: string;
@@ -27,7 +28,7 @@ interface ToolActivity {
 const recentToolCalls: ToolActivity[] = [];
 export const getRecentToolCalls = (): ToolActivity[] => recentToolCalls.slice(-20).reverse();
 const WRITE_TOOL =
-  /(?:navigate|click|scroll|fill|keyboard|key|dialog|computer|upload|paste|proxy_rotate|locate_element|select_all_items)/;
+  /(?:navigate|click|scroll|fill|keyboard|key|dialog|computer|upload|paste|proxy_rotate|locate_element|select_all_items|step)/;
 // A native browser dialog can block the helper call used to resolve the active tab.
 // Let the dialog tool resolve its own tab instead of adding a second request that
 // is guaranteed to time out while beforeunload is visible.
@@ -255,6 +256,26 @@ const handleToolCall = async (
     // A URL sweep must not reach outside the caller's own tab group.
     if (name === TOOL_NAMES.BROWSER.CLOSE_TABS && args.workspace === undefined)
       args = { ...args, workspace: sessionWorkspace || FALLBACK_WORKSPACE };
+    // The key stays on this side: read from the environment, or ~/.env when
+    // Chrome spawned us without the user's shell environment. It is handed to
+    // the extension per call over the local native-messaging pipe and is never
+    // written to extension storage or the browser profile.
+    if (name === TOOL_NAMES.BROWSER.STEP) {
+      const apiKey = readLocalEnv('TYPESAFE_API_KEY');
+      if (!apiKey)
+        throw new Error(
+          'chrome_step is not configured: no TypeSafe API key. Set TYPESAFE_API_KEY in the ' +
+            'native server environment or add a TYPESAFE_API_KEY line to ~/.env.',
+        );
+      const baseUrl = readLocalEnv('TYPESAFE_BASE_URL');
+      const model = readLocalEnv('TYPESAFE_MODEL');
+      args = {
+        ...args,
+        _typesafeApiKey: apiKey,
+        ...(baseUrl ? { _typesafeBaseUrl: baseUrl } : {}),
+        ...(model ? { _typesafeModel: model } : {}),
+      };
+    }
     if (RECENT_TAB_DEFAULT_TOOLS.has(name))
       args = await resolveRecentOrActiveTab(args, signal, activity.requestId, activity.workspace);
     if (WRITE_TOOL.test(name) && !SELF_RESOLVING_WRITE_TOOLS.has(name))

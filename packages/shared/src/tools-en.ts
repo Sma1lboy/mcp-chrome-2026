@@ -36,6 +36,7 @@ const TOOL_NAMES = {
     FILE_UPLOAD: 'chrome_upload_file',
     GET_FORM_VALUE: 'chrome_get_form_value',
     READ_PAGE: 'chrome_read_page',
+    STEP: 'chrome_step',
     COMPUTER: 'chrome_computer',
     POST_TO_X: 'chrome_post_to_x',
     HANDLE_DIALOG: 'chrome_handle_dialog',
@@ -668,6 +669,51 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         },
       },
       required: [],
+    },
+  },
+  {
+    name: TOOL_NAMES.BROWSER.STEP,
+    description:
+      'Complete ONE browser step from a natural-language goal: read the page, decide what to do and ' +
+      'which element to do it to, verify the decision still applies, execute it. Use it for the ' +
+      'high-frequency work — form filling, navigation, filtering. Keep using chrome_read_page plus ' +
+      'chrome_click_element for the rare steps you want to judge yourself. One call is one step; ' +
+      'call it repeatedly with history for a multi-step task. Only clicking and typing are supported, ' +
+      'and the string to type comes from you (the text argument) — this tool never invents one. ' +
+      'If typing is chosen and no text was supplied, it returns refused="needs_text" without acting, ' +
+      'so call again with the text. If the page changed after the decision (the element was replaced, ' +
+      'its row reordered, it became covered or disabled), it returns refused="stale" without acting — ' +
+      'failing the step is deliberate, and preferable to clicking the wrong thing.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        goal: {
+          type: 'string',
+          description:
+            "The whole task goal in natural language, not a single-step instruction (e.g. 'search Lisbon for design-style stays with free cancellation'). Pass the same full goal on every step.",
+        },
+        text: {
+          type: 'string',
+          description:
+            'The string to enter when this step turns out to need typing. Omit it when unsure: the tool answers needs_text and names the field.',
+        },
+        history: {
+          type: 'array',
+          items: { type: 'string', description: 'A short description of one completed step.' },
+          description:
+            'Short descriptions of the steps already completed (last 10 kept). Without it the model repeats work it already did.',
+        },
+        tabId: {
+          type: 'number',
+          description:
+            'Target tab ID (default: the active tab). Strongly prefer passing a tabId from your own workspace.',
+        },
+        windowId: {
+          type: 'number',
+          description: 'Target window ID used to choose the active tab when tabId is omitted.',
+        },
+      },
+      required: ['goal'],
     },
   },
   {

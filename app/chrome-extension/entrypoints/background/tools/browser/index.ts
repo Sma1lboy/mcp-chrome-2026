@@ -26,6 +26,7 @@ export { fileUploadTool } from './file-upload';
 export { pasteImageTool } from './paste-image';
 export { formValueTool } from './form-value';
 export { readPageTool } from './read-page';
+export { stepTool } from './step';
 export { computerTool } from './computer';
 export { postToXTool } from './post-to-x';
 export { handleDialogTool } from './dialog';
