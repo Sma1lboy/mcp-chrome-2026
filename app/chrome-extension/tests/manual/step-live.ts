@@ -291,6 +291,8 @@ async function main() {
     [
       `--remote-debugging-port=${PORT}`,
       `--user-data-dir=${PROFILE}`,
+      // Headless so a verification run never steals focus from whoever is working.
+      '--headless=new',
       '--no-first-run',
       '--no-default-browser-check',
       'about:blank',
