@@ -36,6 +36,7 @@ export const TOOL_NAMES = {
     FILE_UPLOAD: 'chrome_upload_file',
     GET_FORM_VALUE: 'chrome_get_form_value',
     READ_PAGE: 'chrome_read_page',
+    STEP: 'chrome_step',
     COMPUTER: 'chrome_computer',
     POST_TO_X: 'chrome_post_to_x',
     HANDLE_DIALOG: 'chrome_handle_dialog',
@@ -659,6 +660,48 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
       },
       required: [],
+    },
+  },
+  {
+    name: TOOL_NAMES.BROWSER.STEP,
+    description:
+      '用一句自然语言目标完成**一步**浏览器操作：读页 → 决定做什么、对哪个元素做 → 校验决策仍然成立 → 执行。' +
+      '适合高频的表单填写、导航、筛选；低频、需要你自己判断的操作继续用 chrome_read_page + chrome_click_element。' +
+      '每次调用只做一步，多步请带上 history 反复调用。' +
+      '只支持点击和输入文本：输入的字符串由你提供（text 参数），本工具绝不自行编造。' +
+      '若模型选择了输入文本但你没给 text，返回 refused="needs_text" 且不执行任何操作，你补上 text 再调一次即可。' +
+      '若页面在决策之后发生变化（元素被替换、所在行重排、被遮挡、变灰），返回 refused="stale" 且不执行任何操作——' +
+      '这是有意为之：宁可这一步失败，也不点错东西。',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        goal: {
+          type: 'string',
+          description:
+            '本次任务的完整目标（自然语言），不是单步指令。例如"在 Lisbon 搜索设计风格、可免费取消的房源"。每一步都传同一个完整目标。',
+        },
+        text: {
+          type: 'string',
+          description:
+            '当这一步需要输入文本时要写入的字符串。不确定是否需要就先不传：需要时工具会返回 needs_text 并告诉你是哪个字段。',
+        },
+        history: {
+          type: 'array',
+          items: { type: 'string', description: '一条已完成步骤的简短描述。' },
+          description:
+            '此前已完成步骤的简短描述列表（只保留最近 10 条）。不传会让模型重复已经做过的步骤。',
+        },
+        tabId: {
+          type: 'number',
+          description:
+            '目标标签页 ID（默认：当前激活标签页）。强烈建议显式传入你 workspace 内的 tabId。',
+        },
+        windowId: {
+          type: 'number',
+          description: '省略 tabId 时用于选取激活标签页的目标窗口 ID。',
+        },
+      },
+      required: ['goal'],
     },
   },
   {
