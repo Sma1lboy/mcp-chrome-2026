@@ -35,6 +35,7 @@ const TOOL_NAMES = {
     CONSOLE: 'chrome_console',
     FILE_UPLOAD: 'chrome_upload_file',
     GET_FORM_VALUE: 'chrome_get_form_value',
+    SECRET_SINK: 'chrome_secret_sink',
     READ_PAGE: 'chrome_read_page',
     STEP: 'chrome_step',
     COMPUTER: 'chrome_computer',
@@ -1641,7 +1642,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.CLICK,
     description:
-      'Click on an element in a web page. Supports persisted markerId/markerName, CSS selector, XPath, element ref, or viewport coordinates. markerId is re-resolved before clicking.',
+      'Click on an element in a web page. Supports persisted markerId/markerName, CSS selector, XPath, element ref, or viewport coordinates. markerId is re-resolved before clicking. Main-frame clicks are sent as trusted CDP input (with user activation, so pages can open popups and write the clipboard); tabs or popup windows the click opens are returned with their tabId in openedTabs.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -2052,6 +2053,37 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         },
       },
       required: ['selector'],
+    },
+  },
+  {
+    name: TOOL_NAMES.BROWSER.SECRET_SINK,
+    description:
+      'Read a secret from the page (API key, show-once secret, DKIM record, ...) by selector or JS expression and write it straight to a local file (mode 0600) or the stdin of a local command. The value never passes through the agent: the result only reports its length and a sha256 prefix. Provide exactly one of file or command.',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        tabId: { type: 'number', description: 'Target tab ID.' },
+        selector: {
+          type: 'string',
+          description:
+            'CSS selector; reads the value of an input/textarea, otherwise its textContent.',
+        },
+        expression: {
+          type: 'string',
+          description:
+            'JS expression returning a string, evaluated in the page (await allowed). Use instead of selector.',
+        },
+        file: {
+          type: 'string',
+          description: 'Absolute path of the local file to write; overwritten with mode 0600.',
+        },
+        command: {
+          type: 'string',
+          description:
+            'Local shell command that receives the value on stdin, e.g. "railway variables set RESEND_API_KEY --stdin".',
+        },
+      },
+      required: [],
     },
   },
   {

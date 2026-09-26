@@ -1,4 +1,4 @@
-import { NativeMessageType } from '@ethanwilkins/chrome-mcp-shared-2026';
+import { NativeMessageType, TOOL_NAMES } from '@ethanwilkins/chrome-mcp-shared-2026';
 import { BACKGROUND_MESSAGE_TYPES } from '@/common/message-types';
 import { NATIVE_HOST, STORAGE_KEYS, ERROR_MESSAGES, SUCCESS_MESSAGES } from '@/common/constants';
 import { handleCallTool } from './tools';
@@ -494,6 +494,11 @@ export const initNativeHostListener = () => {
   chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
     // Allow UI to call tools directly
     if (message && message.type === 'call_tool' && message.name) {
+      // The raw secret is only safe on the native path, which strips it.
+      if (message.name === TOOL_NAMES.BROWSER.SECRET_SINK) {
+        sendResponse({ success: false, error: 'chrome_secret_sink is MCP-only' });
+        return false;
+      }
       handleCallTool({ name: message.name, args: message.args })
         .then((res) => sendResponse({ success: true, result: res }))
         .catch((err) =>

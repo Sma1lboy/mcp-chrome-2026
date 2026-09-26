@@ -4,6 +4,7 @@ import { TOOL_NAMES } from '@ethanwilkins/chrome-mcp-shared-2026';
 import { TOOL_MESSAGE_TYPES } from '@/common/message-types';
 import { TIMEOUTS, ERROR_MESSAGES } from '@/common/constants';
 import { listMarkersForUrl } from '@/entrypoints/background/element-marker/element-marker-storage';
+import { cdpSessionManager } from '@/utils/cdp-session-manager';
 
 interface Coordinates {
   x: number;
@@ -59,6 +60,93 @@ async function findMarkerForTab(tab: chrome.tabs.Tab, markerId?: string, markerN
   if (!matches[0])
     throw new Error(`Element marker "${markerName}" was not found for the current URL`);
   return matches[0];
+}
+
+const MODIFIER_BITS = { altKey: 1, ctrlKey: 2, metaKey: 4, shiftKey: 8 } as const;
+const CDP_BUTTONS = { left: 1, right: 2, middle: 4 } as const;
+
+/**
+ * Click through CDP Input.dispatchMouseEvent. Unlike DOM-dispatched events these
+ * are isTrusted and grant user activation, which popups (window.open) and
+ * navigator.clipboard require. Focus emulation stays on through a short grace
+ * period: agent tabs sit in the background, and the clipboard API rejects
+ * writes from an unfocused document.
+ */
+async function trustedClick(
+  tabId: number,
+  x: number,
+  y: number,
+  button: 'left' | 'right' | 'middle',
+  clickCount: number,
+  modifiers: ClickToolParams['modifiers'],
+): Promise<void> {
+  let mask = 0;
+  for (const [key, bit] of Object.entries(MODIFIER_BITS))
+    if (modifiers?.[key as keyof typeof MODIFIER_BITS]) mask |= bit;
+  const base = { x: Math.round(x), y: Math.round(y), modifiers: mask };
+  await cdpSessionManager.withSession(tabId, 'trusted-click', async () => {
+    const send = (method: string, params: object) =>
+      cdpSessionManager.sendCommand(tabId, method, params);
+    await send('Emulation.setFocusEmulationEnabled', { enabled: true });
+    try {
+      await send('Input.dispatchMouseEvent', { ...base, type: 'mouseMoved', button: 'none' });
+      for (let i = 1; i <= clickCount; i++) {
+        const press = { ...base, button, clickCount: i };
+        await send('Input.dispatchMouseEvent', {
+          ...press,
+          type: 'mousePressed',
+          buttons: CDP_BUTTONS[button],
+        });
+        await send('Input.dispatchMouseEvent', { ...press, type: 'mouseReleased', buttons: 0 });
+      }
+      // ponytail: fixed grace for async clipboard writes; raise if a site copies later.
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    } finally {
+      await send('Emulation.setFocusEmulationEnabled', { enabled: false }).catch(() => {});
+    }
+  });
+}
+
+/**
+ * Collect tabs/windows that `sourceTabId` opens (window.open, target=_blank)
+ * so the click result can hand the agent their tabIds. A popup window cannot
+ * join a tab group, so without this the agent has no way to find it.
+ */
+function watchOpenedTabs(sourceTabId: number) {
+  const opened: Array<{ tabId: number; url: string }> = [];
+  const listener = (d: chrome.webNavigation.WebNavigationSourceCallbackDetails) => {
+    if (d.sourceTabId === sourceTabId) opened.push({ tabId: d.tabId, url: d.url });
+  };
+  const stop = () => chrome.webNavigation.onCreatedNavigationTarget.removeListener(listener);
+  chrome.webNavigation.onCreatedNavigationTarget.addListener(listener);
+  // Error paths return without collecting; don't leak the listener.
+  setTimeout(stop, 60_000);
+  return async (graceMs: number) => {
+    await new Promise((resolve) => setTimeout(resolve, graceMs));
+    stop();
+    return Promise.all(
+      opened.map(async (o) => {
+        const tab = await chrome.tabs.get(o.tabId).catch(() => undefined);
+        const win = tab && (await chrome.windows.get(tab.windowId).catch(() => undefined));
+        return { ...o, windowId: tab?.windowId, windowType: win?.type };
+      }),
+    );
+  };
+}
+
+function waitForTabLoading(tabId: number, timeout: number): Promise<boolean> {
+  return new Promise((resolve) => {
+    const done = (value: boolean) => {
+      clearTimeout(timer);
+      chrome.tabs.onUpdated.removeListener(listener);
+      resolve(value);
+    };
+    const listener = (id: number, info: chrome.tabs.TabChangeInfo) => {
+      if (id === tabId && info.status === 'loading') done(true);
+    };
+    const timer = setTimeout(() => done(false), timeout);
+    chrome.tabs.onUpdated.addListener(listener);
+  });
 }
 
 /**
@@ -209,31 +297,60 @@ class ClickTool extends BaseBrowserToolExecutor {
         frameIdsFor(frameId),
       );
 
-      // Send click message to content script
-      const result = await this.sendMessageToTab(
-        tab.id,
-        {
-          action: TOOL_MESSAGE_TYPES.CLICK_ELEMENT,
-          selector: finalSelector,
-          coordinates,
-          ref: finalRef,
-          waitForNavigation,
-          timeout,
-          selectorType: finalSelectorType,
-          double: args.double === true,
-          button,
-          bubbles,
-          cancelable,
-          modifiers,
-        },
-        frameId,
-      );
+      // Main-frame clicks resolve the target in the page, then click with
+      // trusted CDP input. Subframe coordinates are frame-relative, so those
+      // keep the DOM dispatch path.
+      const wantTrusted = typeof frameId !== 'number' || frameId === 0;
+      const collectOpened = watchOpenedTabs(tab.id);
+      const sendClick = (resolveOnly: boolean) =>
+        this.sendMessageToTab(
+          tab.id!,
+          {
+            action: TOOL_MESSAGE_TYPES.CLICK_ELEMENT,
+            selector: finalSelector,
+            coordinates,
+            ref: finalRef,
+            waitForNavigation,
+            timeout,
+            selectorType: finalSelectorType,
+            double: args.double === true,
+            button,
+            bubbles,
+            cancelable,
+            modifiers,
+            resolveOnly,
+          },
+          frameId,
+        );
+
+      let result = await sendClick(wantTrusted);
+      let trusted = false;
+      if (result?.resolveOnly) {
+        const navigation = waitForNavigation ? waitForTabLoading(tab.id, timeout) : undefined;
+        try {
+          await trustedClick(
+            tab.id,
+            result.clickX,
+            result.clickY,
+            button || 'left',
+            args.double ? 2 : 1,
+            modifiers,
+          );
+          trusted = true;
+          result = { ...result, navigationOccurred: navigation ? await navigation : false };
+        } catch (error) {
+          // Debugger unavailable (e.g. DevTools is attached): fall back to DOM events.
+          console.warn('Trusted click failed, falling back to DOM dispatch:', error);
+          result = await sendClick(false);
+        }
+      }
 
       if (!result || result.error || result.success === false) {
         return createErrorResponse(
           result?.error || 'Click operation did not report a successful click',
         );
       }
+      const openedTabs = await collectOpened(trusted ? 300 : 500);
 
       // Determine actual click method used
       let clickMethod: string;
@@ -257,6 +374,8 @@ class ClickTool extends BaseBrowserToolExecutor {
               elementInfo: result.elementInfo,
               navigationOccurred: result.navigationOccurred,
               clickMethod,
+              trusted,
+              ...(openedTabs.length ? { openedTabs } : {}),
               markerId: marker?.id,
             }),
           },

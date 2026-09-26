@@ -25,6 +25,7 @@ export { consoleTool } from './console';
 export { fileUploadTool } from './file-upload';
 export { pasteImageTool } from './paste-image';
 export { formValueTool } from './form-value';
+export { secretSinkTool } from './secret-sink';
 export { readPageTool } from './read-page';
 export { stepTool } from './step';
 export { computerTool } from './computer';

@@ -214,6 +214,13 @@ if (window.__CLICK_HELPER_INITIALIZED__) {
         };
       }
 
+      // The background dispatches trusted CDP input at this point instead:
+      // synthetic events carry no user activation, so window.open popups and
+      // navigator.clipboard writes triggered by the click get blocked.
+      if (options.resolveOnly) {
+        return { success: true, resolveOnly: true, clickX, clickY, elementInfo };
+      }
+
       let navigationPromise;
       if (waitForNavigation) {
         navigationPromise = new Promise((resolve) => {
@@ -569,6 +576,7 @@ if (window.__CLICK_HELPER_INITIALIZED__) {
           bubbles: request.bubbles,
           cancelable: request.cancelable,
           modifiers: request.modifiers,
+          resolveOnly: !!request.resolveOnly,
         },
       )
         .then(sendResponse)

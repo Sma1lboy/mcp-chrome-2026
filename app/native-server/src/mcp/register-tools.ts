@@ -10,7 +10,10 @@ import {
   TOOL_NAMES,
   TOOL_SCHEMAS_EN,
 } from '@ethanwilkins/chrome-mcp-shared-2026';
-import { randomUUID } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
+import { spawn } from 'node:child_process';
+import { chmod, writeFile } from 'node:fs/promises';
+import { isAbsolute } from 'node:path';
 import { readLocalEnv } from '../util/local-env';
 
 interface ToolActivity {
@@ -45,6 +48,7 @@ const SELF_RESOLVING_WRITE_TOOLS = new Set([
 // to the tab used by the previous browser operation when tabId is omitted.
 const RECENT_TAB_DEFAULT_TOOLS = new Set([
   'chrome_javascript',
+  'chrome_secret_sink',
   'chrome_extract',
   'chrome_get_web_content',
   'chrome_get_page_text',
@@ -226,6 +230,62 @@ async function resolveRecentOrActiveTab(
   return { ...args, tabId };
 }
 
+/**
+ * Deliver chrome_secret_sink's value to a 0600 file or a command's stdin. The
+ * value is returned by the extension outside `content`; this is the only place
+ * it is read, and the reply carries just its length and a hash prefix.
+ */
+export async function deliverSecret(
+  value: string,
+  args: { file?: unknown; command?: unknown },
+): Promise<CallToolResult> {
+  const sha256 = createHash('sha256').update(value).digest('hex').slice(0, 12);
+  if (typeof args.file === 'string') {
+    await writeFile(args.file, value, { mode: 0o600 });
+    await chmod(args.file, 0o600); // writeFile's mode only applies to new files
+  } else {
+    const command = String(args.command);
+    const { code, stderr } = await new Promise<{ code: number | null; stderr: string }>(
+      (resolve, reject) => {
+        const child = spawn('/bin/sh', ['-c', command], { stdio: ['pipe', 'ignore', 'pipe'] });
+        let stderr = '';
+        child.stderr.on('data', (chunk) => (stderr += chunk));
+        child.on('error', reject);
+        child.on('close', (code) => resolve({ code, stderr }));
+        child.stdin.end(value);
+      },
+    );
+    // stderr may echo what it was fed; drop any line containing the value.
+    const safeStderr = stderr
+      .split('\n')
+      .filter((line) => !line.includes(value))
+      .join('\n')
+      .slice(-500);
+    if (code !== 0) throw new Error(`command exited with ${code}: ${safeStderr}`);
+  }
+  return {
+    content: [
+      {
+        type: 'text',
+        text: JSON.stringify({
+          success: true,
+          length: value.length,
+          sha256,
+          ...(typeof args.file === 'string' ? { file: args.file } : { command: args.command }),
+        }),
+      },
+    ],
+  };
+}
+
+function secretSinkArgsError(args: any): string | undefined {
+  const hasFile = typeof args.file === 'string' && args.file.trim() !== '';
+  const hasCommand = typeof args.command === 'string' && args.command.trim() !== '';
+  if (hasFile === hasCommand) return 'Provide exactly one of file or command';
+  if (hasFile && !isAbsolute(args.file)) return 'file must be an absolute path';
+  return undefined;
+}
+
 const handleToolCall = async (
   name: string,
   args: any,
@@ -281,6 +341,10 @@ const handleToolCall = async (
     if (WRITE_TOOL.test(name) && !SELF_RESOLVING_WRITE_TOOLS.has(name))
       args = await resolveWriteTab(args, signal);
     activity.tabId = args.tabId;
+    if (name === TOOL_NAMES.BROWSER.SECRET_SINK) {
+      const argsError = secretSinkArgsError(args);
+      if (argsError) throw new Error(argsError);
+    }
     // 发送请求到Chrome扩展并等待响应
     const queuedAt = Date.now();
     const response = await serialByTab(
@@ -301,6 +365,11 @@ const handleToolCall = async (
     );
     if (response.status === 'success') {
       activity.outcome = 'success';
+      if (name === TOOL_NAMES.BROWSER.SECRET_SINK) {
+        const { secret, ...rest } = response.data ?? {};
+        if (typeof secret !== 'string') return rest; // extension-side error result
+        return await deliverSecret(secret, args);
+      }
       return response.data;
     } else {
       activity.outcome = 'error';

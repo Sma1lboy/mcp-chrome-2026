@@ -35,6 +35,7 @@ export const TOOL_NAMES = {
     CONSOLE: 'chrome_console',
     FILE_UPLOAD: 'chrome_upload_file',
     GET_FORM_VALUE: 'chrome_get_form_value',
+    SECRET_SINK: 'chrome_secret_sink',
     READ_PAGE: 'chrome_read_page',
     STEP: 'chrome_step',
     COMPUTER: 'chrome_computer',
@@ -1619,7 +1620,7 @@ export const TOOL_SCHEMAS: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.CLICK,
     description:
-      '点击网页元素。支持已保存的 markerId/markerName、CSS 选择器、XPath、元素引用（来自 chrome_read_page）或视口坐标。markerId 会在点击前重新定位目标。',
+      '点击网页元素。支持已保存的 markerId/markerName、CSS 选择器、XPath、元素引用（来自 chrome_read_page）或视口坐标。markerId 会在点击前重新定位目标。主框架里的点击走 CDP 可信输入（带 user activation，页面可以弹窗、写剪贴板）；点击打开的新标签页或弹窗会在结果的 openedTabs 里返回 tabId。',
     inputSchema: {
       type: 'object',
       properties: {
@@ -2018,6 +2019,32 @@ export const TOOL_SCHEMAS: Tool[] = [
         windowId: { type: 'number', description: '省略 tabId 时用于选取目标标签页的窗口 ID' },
       },
       required: ['selector'],
+    },
+  },
+  {
+    name: TOOL_NAMES.BROWSER.SECRET_SINK,
+    description:
+      '按 selector 或 JS 表达式读取页面上的密钥（API key、只显示一次的 secret、DKIM 记录等），直接写入本地文件（权限 0600）或交给本地命令的 stdin。值不经过 agent：结果只返回长度和 sha256 前缀。file 和 command 二选一。',
+    inputSchema: {
+      type: 'object',
+      properties: {
+        tabId: { type: 'number', description: '目标标签页 ID。' },
+        selector: {
+          type: 'string',
+          description: 'CSS 选择器；读取 input/textarea 的 value，否则读 textContent。',
+        },
+        expression: {
+          type: 'string',
+          description: '返回字符串的 JS 表达式（在页面里求值，可以 await）。与 selector 二选一。',
+        },
+        file: { type: 'string', description: '写入的本地文件绝对路径，会以 0600 权限覆盖。' },
+        command: {
+          type: 'string',
+          description:
+            '本地 shell 命令，值通过 stdin 传入，例如 "railway variables set RESEND_API_KEY --stdin"。',
+        },
+      },
+      required: [],
     },
   },
   {
