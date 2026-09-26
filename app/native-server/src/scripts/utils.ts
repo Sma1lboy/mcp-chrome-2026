@@ -140,6 +140,9 @@ export function installBundledSharedRuntime(distDir: string): void {
   const src = path.join(distDir, 'vendor', 'chrome-mcp-shared-2026');
   if (!fs.existsSync(src)) return;
   const dest = path.join(distDir, '..', 'node_modules', '@ethanwilkins', 'chrome-mcp-shared-2026');
+  // In a source checkout dest is the pnpm workspace symlink to packages/shared;
+  // copying over it throws and kills the host on startup.
+  if (fs.lstatSync(dest, { throwIfNoEntry: false })?.isSymbolicLink()) return;
   fs.cpSync(src, dest, { recursive: true, force: true });
 }
 
