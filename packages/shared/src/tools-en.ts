@@ -736,7 +736,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         background: {
           type: 'boolean',
           description:
-            'Avoid focusing/activating tab/window for certain operations (best-effort). Default: true; set false only when foreground interaction is required.',
+            'Default true: never activates the tab or focuses its window, including for type and key (input goes through CDP). Set false only when the user asks to watch, or an editor ignores input without focus.',
         },
         action: {
           type: 'string',
@@ -975,7 +975,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
     description:
       'Navigate to a URL, refresh the current tab, or navigate browser history (back/forward).' +
       WORKSPACE_DISCIPLINE +
-      ' background defaults to true so the user keeps focus; leave that default in place unless the user asks to watch the navigation happen.',
+      " Like every tool here it never takes the user's focus by default (background: true); pass background: false only when the user asks to watch.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -1001,7 +1001,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         background: {
           type: 'boolean',
           description:
-            'Perform the operation without stealing focus. Default: true; set false only when foreground interaction is required.',
+            'Default true: open or navigate without activating the tab or focusing a window. Set false only when the user asks to watch the navigation.',
         },
         activateTab: {
           type: 'boolean',
@@ -1080,7 +1080,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         background: {
           type: 'boolean',
           description:
-            'Attempt capture without bringing tab/window to foreground. CDP-based capture is used for simple viewport captures. For element/full-page capture, the tab may still be made active in its window without focusing the window. Default: false',
+            'Default true: capture without activating the tab or focusing its window (viewport capture goes through CDP). Element and full-page capture read the visible tab, so they never focus either. Set false to bring the tab forward first.',
         },
         width: { type: 'number', description: 'Width in pixels (default: 800)' },
         height: { type: 'number', description: 'Height in pixels (default: 600)' },
@@ -1125,7 +1125,8 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
   },
   {
     name: TOOL_NAMES.BROWSER.SWITCH_TAB,
-    description: 'Switch to a specific browser tab',
+    description:
+      "Switch to a specific browser tab: makes it the active tab of its window. The window is raised and focused only with focusWindow: true, which takes the user's focus, so pass it only when the user asks to see the tab.",
     inputSchema: {
       type: 'object',
       properties: {
@@ -1136,6 +1137,10 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         windowId: {
           type: 'number',
           description: 'The ID of the window where the tab is located.',
+        },
+        focusWindow: {
+          type: 'boolean',
+          description: "Also raise and focus the tab's window. Default false.",
         },
       },
       required: ['tabId'],
@@ -1157,7 +1162,8 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         },
         background: {
           type: 'boolean',
-          description: 'Do not activate tab/focus window while fetching (default: true)',
+          description:
+            'Default true: fetch without activating the tab or focusing its window. Set false only when the user asks to watch.',
         },
         htmlContent: {
           type: 'boolean',
@@ -1234,7 +1240,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         url: {
           type: 'string',
           description:
-            'URL to capture network requests from. For action="start". If not provided, uses the current active tab.',
+            'URL to capture network requests from. For action="start". Opens (or reuses) the tab without activating it or focusing a window. If not provided, uses the current active tab.',
         },
         maxCaptureTime: {
           type: 'number',
@@ -1910,7 +1916,8 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         },
         background: {
           type: 'boolean',
-          description: 'Do not activate tab/focus window when capturing via CDP. Default: true',
+          description:
+            'Default true: capture without activating the tab or focusing its window. Set false only when the user asks to watch.',
         },
         includeExceptions: {
           type: 'boolean',
@@ -2383,7 +2390,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         background: {
           type: 'boolean',
           description:
-            'When a URL is provided, keep the target tab in the background. Defaults to false and activates it.',
+            'Default true: a URL opens in a tab that is not activated and no window is focused. Set false only when the user asks to watch.',
         },
       },
       required: [],

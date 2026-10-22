@@ -703,6 +703,8 @@ export const closeTabsTool = new CloseTabsTool();
 interface SwitchTabToolParams {
   tabId: number;
   windowId?: number;
+  /** Also raise and focus the tab's window. Off by default. */
+  focusWindow?: boolean;
 }
 
 /**
@@ -712,13 +714,14 @@ class SwitchTabTool extends BaseBrowserToolExecutor {
   name = TOOL_NAMES.BROWSER.SWITCH_TAB;
 
   async execute(args: SwitchTabToolParams): Promise<ToolResult> {
-    const { tabId, windowId } = args;
+    const { tabId, windowId, focusWindow = false } = args;
 
     console.log(`Attempting to switch to tab ID: ${tabId} in window ID: ${windowId}`);
 
     try {
-      if (windowId !== undefined) {
-        await chrome.windows.update(windowId, { focused: true });
+      if (focusWindow) {
+        const target = windowId ?? (await chrome.tabs.get(tabId)).windowId;
+        await chrome.windows.update(target, { focused: true });
       }
       await chrome.tabs.update(tabId, { active: true });
 

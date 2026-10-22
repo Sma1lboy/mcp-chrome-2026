@@ -229,8 +229,8 @@ class ComputerTool extends BaseBrowserToolExecutor {
       const tab = await this.resolveTargetTab(args.tabId, args.windowId);
       if (typeof tab.id !== 'number')
         return createErrorResponse(ERROR_MESSAGES.TAB_NOT_FOUND + ': Active tab has no ID');
-      const needsForeground = params.action === 'type' || params.action === 'key';
-      if (params.background === false || needsForeground) {
+      // Input goes through CDP, which reaches a background tab; focus only on request.
+      if (params.background === false) {
         await this.ensureFocus(tab, { activate: true, focusWindow: true });
       }
 
@@ -238,7 +238,7 @@ class ComputerTool extends BaseBrowserToolExecutor {
       const result = await this.addTargetFeedback(
         await this.executeAction(params, tab),
         tab,
-        needsForeground,
+        params.action === 'type' || params.action === 'key',
       );
 
       // Trigger auto-capture on successful actions (except screenshot which is read-only)
@@ -1352,11 +1352,8 @@ class ComputerTool extends BaseBrowserToolExecutor {
       if (keyboardAction && typeof currentTab.id === 'number') {
         await CDPHelper.attach(currentTab.id);
         try {
-          const response = await CDPHelper.send(
-            currentTab.id,
-            'Runtime.evaluate',
-            {
-              expression: `(() => {
+          const response = await CDPHelper.send(currentTab.id, 'Runtime.evaluate', {
+            expression: `(() => {
                 const el = document.activeElement;
                 if (!el) return null;
                 const type = el.getAttribute('type') || '';
@@ -1372,10 +1369,9 @@ class ComputerTool extends BaseBrowserToolExecutor {
                   valuePreview: type === 'password' ? null : (typeof el.value === 'string' ? el.value.slice(0, 120) : null),
                 };
               })()`,
-              returnByValue: true,
-              awaitPromise: false,
-            },
-          );
+            returnByValue: true,
+            awaitPromise: false,
+          });
           focus = response?.result?.value || null;
         } finally {
           await CDPHelper.detach(currentTab.id);

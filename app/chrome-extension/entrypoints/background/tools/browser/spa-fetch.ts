@@ -63,7 +63,7 @@ class SpaFetchTool extends BaseBrowserToolExecutor {
     try {
       // ── Step 1: Navigate to the URL ──────────────────────────────
       let tab: chrome.tabs.Tab;
-      const background = args.background === true;
+      const background = args.background !== false;
 
       if (url) {
         if (typeof args.tabId === 'number') {
