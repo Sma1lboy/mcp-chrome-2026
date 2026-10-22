@@ -724,7 +724,7 @@ export const TOOL_SCHEMAS: Tool[] = [
         background: {
           type: 'boolean',
           description:
-            '对某些操作尽量避免聚焦/激活标签页或窗口（尽力而为）。默认 true；仅当需要前台交互时才设为 false。',
+            '默认 true：任何操作（包括 type 和 key，输入走 CDP）都不激活标签页、不聚焦窗口。仅当用户要求观看，或编辑器在无焦点时不接收输入，才设为 false。',
         },
         action: {
           type: 'string',
@@ -962,7 +962,7 @@ export const TOOL_SCHEMAS: Tool[] = [
     description:
       '打开 URL、刷新当前标签页，或在浏览历史中前进/后退。' +
       WORKSPACE_DISCIPLINE +
-      '默认 background:true，不抢用户焦点；除非用户要求可视化跟随，否则保持该默认。',
+      '和这里所有工具一样，默认不抢用户焦点（background: true）；仅当用户要求观看时才传 background: false。',
     inputSchema: {
       type: 'object',
       properties: {
@@ -986,7 +986,8 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
         background: {
           type: 'boolean',
-          description: '执行操作时不抢占焦点。默认 true；仅当需要前台交互时才设为 false。',
+          description:
+            '默认 true：打开或导航时不激活标签页、不聚焦窗口。仅当用户要求观看导航时才设为 false。',
         },
         activateTab: {
           type: 'boolean',
@@ -1062,7 +1063,7 @@ export const TOOL_SCHEMAS: Tool[] = [
         background: {
           type: 'boolean',
           description:
-            '尝试不将标签页/窗口置于前台进行采集。简单视口采集使用基于 CDP 的方式；元素/整页采集时标签页可能仍会在其窗口内激活，但不聚焦窗口。默认 false',
+            '默认 true：截图时不激活标签页、不聚焦窗口（视口截图走 CDP）。元素和整页截图读取的是可见标签页，同样不会聚焦。设为 false 会先把标签页切到前台。',
         },
         width: { type: 'number', description: '宽度（像素，默认 800）' },
         height: { type: 'number', description: '高度（像素，默认 600）' },
@@ -1106,7 +1107,8 @@ export const TOOL_SCHEMAS: Tool[] = [
   },
   {
     name: TOOL_NAMES.BROWSER.SWITCH_TAB,
-    description: '切换到指定浏览器标签页',
+    description:
+      '切换到指定浏览器标签页：把它设为所在窗口的当前标签页。只有传 focusWindow: true 才会把窗口提到前台并聚焦，这会抢用户焦点，仅当用户要求查看该标签页时才传。',
     inputSchema: {
       type: 'object',
       properties: {
@@ -1117,6 +1119,10 @@ export const TOOL_SCHEMAS: Tool[] = [
         windowId: {
           type: 'number',
           description: '标签页所在窗口的 ID。',
+        },
+        focusWindow: {
+          type: 'boolean',
+          description: '同时把该窗口提到前台并聚焦。默认 false。',
         },
       },
       required: ['tabId'],
@@ -1138,7 +1144,8 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
         background: {
           type: 'boolean',
-          description: '获取内容时不激活标签页/聚焦窗口（默认 true）',
+          description:
+            '默认 true：获取内容时不激活标签页、不聚焦窗口。仅当用户要求观看时才设为 false。',
         },
         htmlContent: {
           type: 'boolean',
@@ -1211,7 +1218,8 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
         url: {
           type: 'string',
-          description: '要采集网络请求的 URL。用于 action="start"。未提供时使用当前激活标签页。',
+          description:
+            '要采集网络请求的 URL。用于 action="start"。会在不激活的标签页里打开（或复用），不聚焦窗口。未提供时使用当前激活标签页。',
         },
         maxCaptureTime: {
           type: 'number',
@@ -1892,7 +1900,8 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
         background: {
           type: 'boolean',
-          description: '通过 CDP 采集时不激活标签页/聚焦窗口。默认 true',
+          description:
+            '默认 true：采集时不激活标签页、不聚焦窗口。仅当用户要求观看时才设为 false。',
         },
         includeExceptions: {
           type: 'boolean',
@@ -2327,7 +2336,8 @@ export const TOOL_SCHEMAS: Tool[] = [
         },
         background: {
           type: 'boolean',
-          description: '提供 URL 时是否在后台打开；默认 false，会激活目标标签页。',
+          description:
+            '默认 true：提供 URL 时在不激活的标签页里打开，不聚焦窗口。仅当用户要求观看时才设为 false。',
         },
       },
       required: [],
