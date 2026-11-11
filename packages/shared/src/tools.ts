@@ -625,7 +625,7 @@ export const TOOL_SCHEMAS: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.READ_PAGE,
     description:
-      '获取页面上可见元素的无障碍树表示；仅返回视口中可见的元素，可选只筛选交互元素。\n提示：如果返回的元素不包含所需的具体元素，请使用 computer 工具的截图（action="screenshot"）获取该元素的屏幕坐标，再按坐标操作。',
+      '获取页面上可见元素的无障碍树表示；仅返回视口中可见的元素，可选只筛选交互元素。\n提示：如果返回的元素不包含所需的具体元素，请使用 computer 工具的截图（action="screenshot"）获取该元素的屏幕坐标，再按坐标操作。结果里如果有 markedElements，那是用户标记的元素，选目标时优先用。',
     inputSchema: {
       type: 'object',
       properties: {
@@ -633,6 +633,11 @@ export const TOOL_SCHEMAS: Tool[] = [
           type: 'string',
           description:
             '可选 URL；提供后先导航到该 URL，再读取目标标签页。省略时读取当前目标标签页。',
+        },
+        includeElements: {
+          type: 'boolean',
+          description:
+            '额外返回每个 ref 的选择器和矩形（elements 数组，默认 false）。pageContent 里已经有 ref 和中心坐标，一般不需要。',
         },
         maxOutputBytes: {
           type: 'number',
@@ -1822,6 +1827,10 @@ export const TOOL_SCHEMAS: Tool[] = [
         selector: {
           type: 'string',
           description: 'CSS 选择器，用于过滤可交互元素。',
+        },
+        includeRect: {
+          type: 'boolean',
+          description: '额外返回每个元素的矩形（x、y、width、height，默认 false）。',
         },
         includeCoordinates: {
           type: 'boolean',

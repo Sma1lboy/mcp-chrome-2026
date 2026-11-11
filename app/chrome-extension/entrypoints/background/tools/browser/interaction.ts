@@ -62,6 +62,29 @@ async function findMarkerForTab(tab: chrome.tabs.Tab, markerId?: string, markerN
   return matches[0];
 }
 
+/**
+ * Trim a helper's elementInfo for the tool reply: every character lands in the
+ * agent's context. Drops the bounding rect, empty values, and flags that only
+ * say "nothing unusual" (visible, verified, a single match).
+ */
+export function compactElementInfo(info: unknown): Record<string, unknown> | undefined {
+  if (!info || typeof info !== 'object') return undefined;
+  const out: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(info)) {
+    if (key === 'rect' || key === 'className' || key === 'clickMethod') continue;
+    if (value === null || value === undefined || value === '') continue;
+    if (value === true && ['isVisible', 'isHitTestVisible', 'verified'].includes(key)) continue;
+    if (key === 'matchCount' && value === 1) continue;
+    out[key] = key === 'text' && typeof value === 'string' ? value.slice(0, 80) : value;
+  }
+  return out;
+}
+
+/** A helper message that only restates success adds nothing to the reply. */
+function informativeMessage(message: unknown): string | undefined {
+  return typeof message === 'string' && !/successful(ly)?$/.test(message) ? message : undefined;
+}
+
 const MODIFIER_BITS = { altKey: 1, ctrlKey: 2, metaKey: 4, shiftKey: 8 } as const;
 const CDP_BUTTONS = { left: 1, right: 2, middle: 4 } as const;
 
@@ -400,28 +423,15 @@ class ClickTool extends BaseBrowserToolExecutor {
       }
       const openedTabs = await collectOpened(OPENED_TABS_GRACE_MS);
 
-      // Determine actual click method used
-      let clickMethod: string;
-      if (coordinates) {
-        clickMethod = 'coordinates';
-      } else if (finalRef) {
-        clickMethod = marker ? 'marker' : 'ref';
-      } else if (finalSelector) {
-        clickMethod = 'selector';
-      } else {
-        clickMethod = 'unknown';
-      }
-
       return {
         content: [
           {
             type: 'text',
             text: JSON.stringify({
               success: true,
-              message: result.message || 'Click operation successful',
-              elementInfo: result.elementInfo,
-              navigationOccurred: result.navigationOccurred,
-              clickMethod,
+              message: informativeMessage(result.message),
+              elementInfo: compactElementInfo(result.elementInfo),
+              ...(result.navigationOccurred ? { navigationOccurred: true } : {}),
               trusted,
               ...(openedTabs.length ? { openedTabs } : {}),
               markerId: marker?.id,
@@ -621,8 +631,8 @@ class FillTool extends BaseBrowserToolExecutor {
             type: 'text',
             text: JSON.stringify({
               success: true,
-              message: result.message || 'Fill operation successful',
-              elementInfo: result.elementInfo,
+              message: informativeMessage(result.message),
+              elementInfo: compactElementInfo(result.elementInfo),
               markerId: marker?.id,
             }),
           },

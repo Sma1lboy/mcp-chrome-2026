@@ -175,9 +175,40 @@ interface GetInteractiveElementsToolParams {
   textQuery?: string; // Text to search for within interactive elements (fuzzy search)
   selector?: string; // CSS selector to filter interactive elements
   includeCoordinates?: boolean; // Include element coordinates in the response (default: true)
+  includeRect?: boolean; // Also include each element's bounding rect (default: false)
   types?: string[]; // Types of interactive elements to include (default: all types)
   tabId?: number;
   windowId?: number;
+}
+
+/**
+ * Trim one element for the reply: whole-pixel centre point, no bounding rect
+ * unless asked for, and no fields that are at their default.
+ */
+export function compactInteractiveElement(el: any, includeRect: boolean) {
+  const { coordinates, isInteractive, disabled, role, ...rest } = el || {};
+  const out: Record<string, unknown> = { ...rest };
+  if (isInteractive === false) out.isInteractive = false;
+  if (disabled) out.disabled = true;
+  if (role) out.role = role;
+  if (coordinates) {
+    const r = coordinates.rect;
+    out.coordinates = {
+      x: Math.round(coordinates.x),
+      y: Math.round(coordinates.y),
+      ...(includeRect && r
+        ? {
+            rect: {
+              x: Math.round(r.x),
+              y: Math.round(r.y),
+              width: Math.round(r.width),
+              height: Math.round(r.height),
+            },
+          }
+        : {}),
+    };
+  }
+  return out;
 }
 
 class GetInteractiveElementsTool extends BaseBrowserToolExecutor {
@@ -187,7 +218,7 @@ class GetInteractiveElementsTool extends BaseBrowserToolExecutor {
    * Execute get interactive elements operation
    */
   async execute(args: GetInteractiveElementsToolParams): Promise<ToolResult> {
-    const { textQuery, selector, includeCoordinates = true, types } = args;
+    const { textQuery, selector, includeCoordinates = true, includeRect = false, types } = args;
 
     console.log(`Starting get interactive elements with options:`, args);
 
@@ -223,7 +254,9 @@ class GetInteractiveElementsTool extends BaseBrowserToolExecutor {
               windowId: tab.windowId,
               active: tab.active === true,
               url: tab.url || '',
-              elements: result.elements,
+              elements: result.elements.map((el: any) =>
+                compactInteractiveElement(el, includeRect),
+              ),
               count: result.elements.length,
               query: {
                 textQuery,
