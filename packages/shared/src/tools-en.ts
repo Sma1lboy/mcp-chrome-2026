@@ -1648,7 +1648,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.CLICK,
     description:
-      'Click on an element in a web page. Supports persisted markerId/markerName, CSS selector, XPath, element ref, or viewport coordinates. markerId is re-resolved before clicking. Main-frame clicks are sent as trusted CDP input (with user activation, so pages can open popups and write the clipboard); tabs or popup windows the click opens are returned with their tabId in openedTabs.',
+      'Click on an element in a web page. Supports persisted markerId/markerName, CSS selector, XPath, element ref, or viewport coordinates. markerId is re-resolved before clicking. Main-frame clicks are sent as trusted CDP input (with user activation, so pages can open popups and write the clipboard); tabs or popup windows the click opens right away are returned with their tabId in openedTabs; ones the page opens later (after a request returns, say) are not, so find those with get_windows_and_tabs.',
     inputSchema: {
       type: 'object',
       properties: {
