@@ -7,6 +7,21 @@ if (window.__FILL_HELPER_INITIALIZED__) {
 } else {
   window.__FILL_HELPER_INITIALIZED__ = true;
   /**
+   * Wait for a scroll to take effect. A hidden tab's timers fire about once a second, and agent
+   * tabs are opened in the background, so the settle below turned every click and fill into a
+   * one-second call. `scrollIntoView({ behavior: 'auto' })` is synchronous: hidden, yield once.
+   */
+  function settleAfterScroll(ms) {
+    if (!document.hidden) return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise((resolve) => {
+      if (typeof MessageChannel !== 'function') return setTimeout(resolve, 0);
+      const channel = new MessageChannel();
+      channel.port1.onmessage = () => resolve();
+      channel.port2.postMessage(0);
+    });
+  }
+
+  /**
    * Fill an input element with the specified value
    * @param {string} selector - CSS selector for the element to fill
    * @param {string} value - Value to fill into the element
@@ -203,7 +218,7 @@ if (window.__FILL_HELPER_INITIALIZED__) {
       // current viewport by dynamic pages.
       if (!isElementVisible(element) && typeof element.scrollIntoView === 'function') {
         element.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await settleAfterScroll(100);
       }
 
       // Get element information
@@ -321,7 +336,7 @@ if (window.__FILL_HELPER_INITIALIZED__) {
 
       // Scroll element into view
       element.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await settleAfterScroll(100);
 
       // Focus the element
       element.focus();
