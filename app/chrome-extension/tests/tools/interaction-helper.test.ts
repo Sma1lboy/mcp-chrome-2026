@@ -215,4 +215,45 @@ describe('interaction helpers', () => {
       },
     });
   });
+  // Agent tabs open in the background, where Chrome fires page timers about once a second:
+  // a 100 ms settle after scrolling made every click and fill take a second.
+  it('does not sit on a page timer after scrolling when the tab is hidden', async () => {
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => true });
+    const delays: number[] = [];
+    const realSetTimeout = window.setTimeout.bind(window);
+    vi.spyOn(window, 'setTimeout').mockImplementation(((
+      fn: TimerHandler,
+      ms?: number,
+      ...rest: unknown[]
+    ) => {
+      delays.push(ms ?? 0);
+      return realSetTimeout(fn, ms, ...rest);
+    }) as typeof window.setTimeout);
+    try {
+      const button = document.createElement('button');
+      button.id = 'go';
+      setRect(button);
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = 'name';
+      setRect(input);
+      document.body.append(button, input);
+
+      mockElementFromPoint(button);
+      const click = loadInjectedHelper('click-helper.js', '__CLICK_HELPER_INITIALIZED__');
+      await expect(
+        callHelper(click, { action: 'clickElement', selector: '#go' }),
+      ).resolves.toMatchObject({ success: true });
+
+      mockElementFromPoint(input);
+      const fill = loadInjectedHelper('fill-helper.js', '__FILL_HELPER_INITIALIZED__');
+      await expect(
+        callHelper(fill, { action: 'fillElement', selector: '#name', value: 'x' }),
+      ).resolves.toMatchObject({ success: true });
+
+      expect(delays.filter((ms) => ms >= 50)).toEqual([]);
+    } finally {
+      delete (document as { hidden?: boolean }).hidden;
+    }
+  });
 });

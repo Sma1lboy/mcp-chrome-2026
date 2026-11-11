@@ -7,6 +7,21 @@ if (window.__CLICK_HELPER_INITIALIZED__) {
 } else {
   window.__CLICK_HELPER_INITIALIZED__ = true;
   /**
+   * Wait for a scroll to take effect. A hidden tab's timers fire about once a second, and agent
+   * tabs are opened in the background, so the settle below turned every click and fill into a
+   * one-second call. `scrollIntoView({ behavior: 'auto' })` is synchronous: hidden, yield once.
+   */
+  function settleAfterScroll(ms) {
+    if (!document.hidden) return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise((resolve) => {
+      if (typeof MessageChannel !== 'function') return setTimeout(resolve, 0);
+      const channel = new MessageChannel();
+      channel.port1.onmessage = () => resolve();
+      channel.port2.postMessage(0);
+    });
+  }
+
+  /**
    * Click on an element matching the selector or at specific coordinates
    * @param {string} selector - CSS selector for the element to click
    * @param {boolean} waitForNavigation - Whether to wait for navigation to complete after click
@@ -70,7 +85,7 @@ if (window.__CLICK_HELPER_INITIALIZED__) {
         } else {
           element = target;
           element.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
-          await new Promise((resolve) => setTimeout(resolve, 80));
+          await settleAfterScroll(80);
 
           const rect = element.getBoundingClientRect();
           clickX = rect.left + rect.width / 2;
@@ -180,7 +195,7 @@ if (window.__CLICK_HELPER_INITIALIZED__) {
 
         // First sroll so that the element is in view, then check visibility.
         element.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'center' });
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await settleAfterScroll(100);
         elementInfo.isVisible = isElementVisible(element);
         elementInfo.isHitTestVisible = isElementHitTestVisible(element);
         if (!isElementActionable(element)) {
