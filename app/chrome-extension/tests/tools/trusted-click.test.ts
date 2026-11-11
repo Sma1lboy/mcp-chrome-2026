@@ -49,3 +49,57 @@ describe('trustedClick focus hold', () => {
     expect(detach).toHaveBeenCalledTimes(1);
   });
 });
+
+import { compactElementInfo } from '@/entrypoints/background/tools/browser/interaction';
+import { compactInteractiveElement } from '@/entrypoints/background/tools/browser/web-fetcher';
+
+describe('compact tool replies', () => {
+  it('keeps what identifies the element and anything unusual, drops the rest', () => {
+    const info = {
+      tagName: 'BUTTON',
+      id: 'go',
+      className: '',
+      href: null,
+      isVisible: true,
+      isHitTestVisible: false,
+      matchCount: 1,
+      rect: { x: 1.5 },
+      value: 'x',
+      clickMethod: 'selector',
+    };
+    expect(compactElementInfo(info)).toEqual({
+      tagName: 'BUTTON',
+      id: 'go',
+      isHitTestVisible: false,
+      value: 'x',
+    });
+  });
+
+  it('rounds coordinates and leaves the rect out unless asked for', () => {
+    const el = {
+      type: 'link',
+      selector: 'a',
+      text: 'Team',
+      isInteractive: true,
+      disabled: false,
+      role: null,
+      coordinates: {
+        x: 148.04,
+        y: 149.92,
+        rect: { x: 130.6, y: 141.4, width: 34.8, height: 16.8 },
+      },
+    };
+    expect(compactInteractiveElement(el, false)).toEqual({
+      type: 'link',
+      selector: 'a',
+      text: 'Team',
+      coordinates: { x: 148, y: 150 },
+    });
+    expect((compactInteractiveElement(el, true).coordinates as any).rect).toEqual({
+      x: 131,
+      y: 141,
+      width: 35,
+      height: 17,
+    });
+  });
+});

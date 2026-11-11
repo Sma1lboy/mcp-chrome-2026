@@ -631,7 +631,7 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.READ_PAGE,
     description:
-      'Get an accessibility tree representation of visible elements on the page. Only returns elements that are visible in the viewport. Optionally filter for only interactive elements.\nTip: If the returned elements do not include the specific element you need, use the computer tool\'s screenshot (action="screenshot") to capture the element\'s on-screen coordinates, then operate by coordinates.',
+      'Get an accessibility tree representation of visible elements on the page. Only returns elements that are visible in the viewport. Optionally filter for only interactive elements.\nTip: If the returned elements do not include the specific element you need, use the computer tool\'s screenshot (action="screenshot") to capture the element\'s on-screen coordinates, then operate by coordinates. If the result has markedElements, those are elements the user marked; prefer them as targets.',
     inputSchema: {
       type: 'object',
       properties: {
@@ -639,6 +639,11 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
           type: 'string',
           description:
             'Optional URL. When provided, navigate the target tab before reading it; when omitted, read the current target tab.',
+        },
+        includeElements: {
+          type: 'boolean',
+          description:
+            "Also return each ref's selector and rect (the elements array, default false). pageContent already carries refs and centre coordinates, so this is rarely needed.",
         },
         maxOutputBytes: {
           type: 'number',
@@ -1837,6 +1842,11 @@ export const TOOL_SCHEMAS_EN: Tool[] = [
         selector: {
           type: 'string',
           description: 'CSS 选择器，用于过滤可交互元素。',
+        },
+        includeRect: {
+          type: 'boolean',
+          description:
+            "Also return each element's bounding rect (x, y, width, height; default false).",
         },
         includeCoordinates: {
           type: 'boolean',

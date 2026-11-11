@@ -19,6 +19,14 @@ interface ReadPageParams {
   tabId?: number; // target existing tab id
   windowId?: number; // when no tabId, pick active tab from this window
   maxOutputBytes?: number;
+  includeElements?: boolean; // also return the structured per-ref list (selector + rect)
+}
+
+function roundRect(rect: any) {
+  if (!rect || typeof rect !== 'object') return rect;
+  return Object.fromEntries(
+    Object.entries(rect).map(([k, v]) => [k, typeof v === 'number' ? Math.round(v) : v]),
+  );
 }
 
 const DEFAULT_MAX_OUTPUT_BYTES = 24_000;
@@ -56,10 +64,6 @@ class ReadPageTool extends BaseBrowserToolExecutor {
     const userControlled = requestedDepth !== undefined || !!focusRefId;
 
     try {
-      // Tip text returned to callers to guide next action
-      const standardTips =
-        "If the specific element you need is missing from the returned data, use the 'screenshot' tool to capture the current viewport and confirm the element's on-screen coordinates. Also note: 'markedElements' are user-marked elements and have the highest priority when choosing targets.";
-
       let tab = await this.resolveTargetTab(args?.tabId, args?.windowId);
       if (url) {
         if (typeof tab.id !== 'number') {
@@ -149,36 +153,36 @@ class ReadPageTool extends BaseBrowserToolExecutor {
         return out.join('\n');
       };
 
-      // Unified base payload structure - consistent keys for stable contract
+      // Every character here lands in the agent's context, so the reply carries
+      // the compact tree only. Fields that are empty or at their default are
+      // left out, and the structured per-ref list (the same elements again, as
+      // selector + rect) is opt-in.
+      const dialogs = Array.isArray(resp?.dialogs) ? resp.dialogs : [];
+      const overlays = Array.isArray(resp?.overlays) ? resp.overlays : [];
       const basePayload: Record<string, any> = {
         success: true,
         filter: filter || 'all',
         pageContent,
-        tips: standardTips,
         viewport: treeOk ? resp.viewport : { width: null, height: null, dpr: null },
-        stats: stats || { processed: 0, included: 0, durationMs: 0 },
         refMapCount: refCount,
         tabId: tab.id,
         windowId: tab.windowId,
-        active: tab.active === true,
         url: tab.url || url || '',
         title: tab.title || '',
-        sparse: treeOk ? isSparse : false,
-        depth: requestedDepth ?? null,
-        focus: focusRefId ? { refId: focusRefId, found: treeOk } : null,
-        markedElements,
-        elements: treeOk
-          ? (Array.isArray(resp?.refMap) ? resp.refMap : []).map((item: any) => ({
-              ...item,
-              refId: item.ref,
-            }))
-          : [],
-        count: treeOk ? refCount : 0,
-        fallbackUsed: false,
-        fallbackSource: null,
-        reason: null,
-        dialogs: Array.isArray(resp?.dialogs) ? resp.dialogs : [],
-        overlays: Array.isArray(resp?.overlays) ? resp.overlays : [],
+        ...(treeOk && isSparse ? { sparse: true } : {}),
+        ...(requestedDepth !== undefined ? { depth: requestedDepth } : {}),
+        ...(focusRefId ? { focus: { refId: focusRefId, found: treeOk } } : {}),
+        ...(markedElements.length ? { markedElements } : {}),
+        ...(dialogs.length ? { dialogs } : {}),
+        ...(overlays.length ? { overlays } : {}),
+        ...(args?.includeElements === true && treeOk
+          ? {
+              elements: (Array.isArray(resp?.refMap) ? resp.refMap : []).map((item: any) => ({
+                ...item,
+                rect: roundRect(item.rect),
+              })),
+            }
+          : {}),
       };
 
       const serializePayload = (payload: Record<string, any>): string => {
