@@ -83,6 +83,22 @@ async function releaseFocusHold(tabId: number): Promise<void> {
 }
 
 /**
+ * Chrome drops input sent to a page that has not painted yet, and a tab opened
+ * in the background does not paint until focus emulation turns on. A click
+ * sent in that gap reports success and never reaches the page, so wait for
+ * the first paint (plus one frame) before dispatching. Already-painted pages
+ * resolve at once.
+ */
+const WAIT_FOR_FIRST_PAINT = `new Promise((resolve) => {
+  if (performance.getEntriesByType('paint').length) return resolve(true);
+  setTimeout(() => resolve(false), 500);
+  new PerformanceObserver((list, observer) => {
+    observer.disconnect();
+    requestAnimationFrame(() => resolve(true));
+  }).observe({ type: 'paint', buffered: true });
+})`;
+
+/**
  * Click through CDP Input.dispatchMouseEvent. Unlike DOM-dispatched events these
  * are isTrusted and grant user activation, which popups (window.open) and
  * navigator.clipboard require. Returns as soon as the events are dispatched;
@@ -109,6 +125,10 @@ export async function trustedClick(
   else clearTimeout(held);
   try {
     await send('Emulation.setFocusEmulationEnabled', { enabled: true });
+    await Promise.race([
+      send('Runtime.evaluate', { expression: WAIT_FOR_FIRST_PAINT, awaitPromise: true }),
+      new Promise((resolve) => setTimeout(resolve, 800)),
+    ]).catch(() => {});
     await send('Input.dispatchMouseEvent', { ...base, type: 'mouseMoved', button: 'none' });
     for (let i = 1; i <= clickCount; i++) {
       const press = { ...base, button, clickCount: i };
