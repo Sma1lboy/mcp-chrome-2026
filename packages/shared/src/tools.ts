@@ -1628,7 +1628,7 @@ export const TOOL_SCHEMAS: Tool[] = [
   {
     name: TOOL_NAMES.BROWSER.CLICK,
     description:
-      '点击网页元素。支持已保存的 markerId/markerName、CSS 选择器、XPath、元素引用（来自 chrome_read_page）或视口坐标。markerId 会在点击前重新定位目标。主框架里的点击走 CDP 可信输入（带 user activation，页面可以弹窗、写剪贴板）；点击打开的新标签页或弹窗会在结果的 openedTabs 里返回 tabId。',
+      '点击网页元素。支持已保存的 markerId/markerName、CSS 选择器、XPath、元素引用（来自 chrome_read_page）或视口坐标。markerId 会在点击前重新定位目标。主框架里的点击走 CDP 可信输入（带 user activation，页面可以弹窗、写剪贴板）；点击当场打开的新标签页或弹窗会在结果的 openedTabs 里返回 tabId；页面过一会儿才打开的（比如等请求返回后）不在里面，用 get_windows_and_tabs 找。',
     inputSchema: {
       type: 'object',
       properties: {

@@ -66,13 +66,29 @@ const MODIFIER_BITS = { altKey: 1, ctrlKey: 2, metaKey: 4, shiftKey: 8 } as cons
 const CDP_BUTTONS = { left: 1, right: 2, middle: 4 } as const;
 
 /**
+ * How long focus emulation outlives a trusted click. Agent tabs sit in the
+ * background and the clipboard API rejects writes from an unfocused document,
+ * so a page that copies asynchronously after the click needs this window.
+ * The click itself does not wait for it: the hold is released by a timer.
+ */
+const FOCUS_HOLD_MS = 300;
+const focusHolds = new Map<number, ReturnType<typeof setTimeout>>();
+
+async function releaseFocusHold(tabId: number): Promise<void> {
+  focusHolds.delete(tabId);
+  await cdpSessionManager
+    .sendCommand(tabId, 'Emulation.setFocusEmulationEnabled', { enabled: false })
+    .catch(() => {});
+  await cdpSessionManager.detach(tabId, 'trusted-click').catch(() => {});
+}
+
+/**
  * Click through CDP Input.dispatchMouseEvent. Unlike DOM-dispatched events these
  * are isTrusted and grant user activation, which popups (window.open) and
- * navigator.clipboard require. Focus emulation stays on through a short grace
- * period: agent tabs sit in the background, and the clipboard API rejects
- * writes from an unfocused document.
+ * navigator.clipboard require. Returns as soon as the events are dispatched;
+ * the debugger session and focus emulation are released FOCUS_HOLD_MS later.
  */
-async function trustedClick(
+export async function trustedClick(
   tabId: number,
   x: number,
   y: number,
@@ -84,27 +100,33 @@ async function trustedClick(
   for (const [key, bit] of Object.entries(MODIFIER_BITS))
     if (modifiers?.[key as keyof typeof MODIFIER_BITS]) mask |= bit;
   const base = { x: Math.round(x), y: Math.round(y), modifiers: mask };
-  await cdpSessionManager.withSession(tabId, 'trusted-click', async () => {
-    const send = (method: string, params: object) =>
-      cdpSessionManager.sendCommand(tabId, method, params);
+  const send = (method: string, params: object) =>
+    cdpSessionManager.sendCommand(tabId, method, params);
+
+  // A click inside the previous click's hold takes over its session.
+  const held = focusHolds.get(tabId);
+  if (held === undefined) await cdpSessionManager.attach(tabId, 'trusted-click');
+  else clearTimeout(held);
+  try {
     await send('Emulation.setFocusEmulationEnabled', { enabled: true });
-    try {
-      await send('Input.dispatchMouseEvent', { ...base, type: 'mouseMoved', button: 'none' });
-      for (let i = 1; i <= clickCount; i++) {
-        const press = { ...base, button, clickCount: i };
-        await send('Input.dispatchMouseEvent', {
-          ...press,
-          type: 'mousePressed',
-          buttons: CDP_BUTTONS[button],
-        });
-        await send('Input.dispatchMouseEvent', { ...press, type: 'mouseReleased', buttons: 0 });
-      }
-      // ponytail: fixed grace for async clipboard writes; raise if a site copies later.
-      await new Promise((resolve) => setTimeout(resolve, 300));
-    } finally {
-      await send('Emulation.setFocusEmulationEnabled', { enabled: false }).catch(() => {});
+    await send('Input.dispatchMouseEvent', { ...base, type: 'mouseMoved', button: 'none' });
+    for (let i = 1; i <= clickCount; i++) {
+      const press = { ...base, button, clickCount: i };
+      await send('Input.dispatchMouseEvent', {
+        ...press,
+        type: 'mousePressed',
+        buttons: CDP_BUTTONS[button],
+      });
+      await send('Input.dispatchMouseEvent', { ...press, type: 'mouseReleased', buttons: 0 });
     }
-  });
+  } catch (error) {
+    await releaseFocusHold(tabId);
+    throw error;
+  }
+  focusHolds.set(
+    tabId,
+    setTimeout(() => void releaseFocusHold(tabId), FOCUS_HOLD_MS),
+  );
 }
 
 /**
@@ -112,6 +134,12 @@ async function trustedClick(
  * so the click result can hand the agent their tabIds. A popup window cannot
  * join a tab group, so without this the agent has no way to find it.
  */
+// ponytail: a tab the click handler opens directly is announced before the
+// click returns (measured), so this is only a margin. A page that opens one
+// later (after a fetch, say) is not reported; raise this or add a wait option
+// if that case matters.
+const OPENED_TABS_GRACE_MS = 50;
+
 function watchOpenedTabs(sourceTabId: number) {
   const opened: Array<{ tabId: number; url: string }> = [];
   const listener = (d: chrome.webNavigation.WebNavigationSourceCallbackDetails) => {
@@ -350,7 +378,7 @@ class ClickTool extends BaseBrowserToolExecutor {
           result?.error || 'Click operation did not report a successful click',
         );
       }
-      const openedTabs = await collectOpened(trusted ? 300 : 500);
+      const openedTabs = await collectOpened(OPENED_TABS_GRACE_MS);
 
       // Determine actual click method used
       let clickMethod: string;
